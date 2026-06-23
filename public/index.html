@@ -7,151 +7,190 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.8.2/jspdf.plugin.autotable.min.js"></script>
 <style>
-  :root {
-    --navy:#1a3a6b; --navy-light:#2a5298; --navy-bg:#f0f4fa;
-    --green:#1a6b3a; --red:#c0392b;
-    --border:#dde3ee; --text:#1a1a2e; --muted:#6b7280;
-    --white:#fff; --surface:#f8fafc;
-    --radius:10px; --radius-sm:6px;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f9;color:var(--text);min-height:100vh}
+:root{--navy:#1a3a6b;--navy-light:#2a5298;--navy-bg:#f0f4fa;--green:#1a6b3a;--red:#c0392b;--border:#dde3ee;--text:#1a1a2e;--muted:#6b7280;--white:#fff;--surface:#f8fafc;--radius:10px;--radius-sm:6px}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Segoe UI',system-ui,sans-serif;background:#eef2f9;color:var(--text);min-height:100vh}
 
-  /* ── topbar ── */
-  .topbar{background:var(--navy);color:#fff;padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(26,58,107,.3)}
-  .topbar-brand{display:flex;align-items:center;gap:12px}
-  .topbar-logo{width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
-  .topbar-title{font-size:15px;font-weight:600}
-  .topbar-sub{font-size:11px;opacity:.65;margin-top:1px}
-  .topbar-status{font-size:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px}
-  .status-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
-  .status-dot.off{background:#f87171}
+/* LOGIN */
+#login-screen{position:fixed;inset:0;background:var(--navy);display:flex;align-items:center;justify-content:center;z-index:999}
+.login-box{background:#fff;border-radius:16px;padding:2.5rem 2rem;width:340px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-logo{text-align:center;font-size:40px;margin-bottom:.5rem}
+.login-title{text-align:center;font-size:18px;font-weight:700;color:var(--navy);margin-bottom:.25rem}
+.login-sub{text-align:center;font-size:12px;color:var(--muted);margin-bottom:1.75rem}
+.login-field{margin-bottom:1rem}
+.login-field label{font-size:12px;color:var(--muted);font-weight:600;display:block;margin-bottom:4px}
+.login-field input{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:var(--radius-sm);font-size:14px;font-family:inherit;transition:border-color .15s}
+.login-field input:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,58,107,.1)}
+.login-btn{width:100%;background:var(--navy);color:#fff;border:none;border-radius:var(--radius-sm);padding:11px;font-size:14px;font-weight:600;cursor:pointer;font-family:inherit;margin-top:.5rem;transition:background .15s}
+.login-btn:hover{background:var(--navy-light)}
+.login-err{color:var(--red);font-size:12px;text-align:center;margin-top:.75rem;min-height:18px}
+.login-footer{text-align:center;font-size:11px;color:var(--muted);margin-top:1.25rem}
 
-  /* ── layout ── */
-  .layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
-  .sidebar{background:var(--white);border-right:1px solid var(--border);padding:1.25rem 0}
-  .sidebar-section{padding:0 1rem;margin-bottom:1.5rem}
-  .sidebar-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:.5rem;padding:0 .5rem}
-  .nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:2px}
-  .nav-item:hover{background:var(--navy-bg);color:var(--navy)}
-  .nav-item.active{background:var(--navy-bg);color:var(--navy);font-weight:600}
-  .nav-item svg{width:16px;height:16px;flex-shrink:0}
-  .main{padding:1.5rem 2rem;overflow-y:auto}
-  .page{display:none}.page.active{display:block}
+/* TOPBAR */
+.topbar{background:var(--navy);color:#fff;padding:0 2rem;height:56px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:100;box-shadow:0 2px 8px rgba(26,58,107,.3)}
+.topbar-brand{display:flex;align-items:center;gap:12px}
+.topbar-logo{width:36px;height:36px;background:rgba(255,255,255,.15);border-radius:8px;display:flex;align-items:center;justify-content:center;font-size:18px}
+.topbar-title{font-size:15px;font-weight:600}
+.topbar-sub{font-size:11px;opacity:.65;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:12px}
+.topbar-status{font-size:11px;background:rgba(255,255,255,.12);border:1px solid rgba(255,255,255,.2);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px}
+.status-dot{width:7px;height:7px;border-radius:50%;background:#4ade80}
+.status-dot.off{background:#f87171}
+.user-badge{font-size:11px;background:rgba(255,255,255,.15);border-radius:20px;padding:4px 12px;display:flex;align-items:center;gap:6px}
+.logout-btn{background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:#fff;border-radius:6px;padding:4px 10px;font-size:11px;cursor:pointer;font-family:inherit;transition:all .15s}
+.logout-btn:hover{background:rgba(255,255,255,.2)}
 
-  /* ── cards ── */
-  .card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
-  .card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:.6rem;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
-  .card-title svg{width:14px;height:14px}
+/* LAYOUT */
+.layout{display:grid;grid-template-columns:220px 1fr;min-height:calc(100vh - 56px)}
+.sidebar{background:var(--white);border-right:1px solid var(--border);padding:1.25rem 0}
+.sidebar-section{padding:0 1rem;margin-bottom:1.5rem}
+.sidebar-label{font-size:10px;text-transform:uppercase;letter-spacing:1px;color:var(--muted);font-weight:600;margin-bottom:.5rem;padding:0 .5rem}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 12px;border-radius:var(--radius-sm);font-size:13px;color:var(--muted);cursor:pointer;transition:all .15s;margin-bottom:2px}
+.nav-item:hover{background:var(--navy-bg);color:var(--navy)}
+.nav-item.active{background:var(--navy-bg);color:var(--navy);font-weight:600}
+.nav-item svg{width:16px;height:16px;flex-shrink:0}
+.main{padding:1.5rem 2rem;overflow-y:auto}
+.page{display:none}.page.active{display:block}
 
-  /* ── grid ── */
-  .row{display:grid;gap:10px;margin-bottom:10px}
-  .col-2{grid-template-columns:1fr 1fr}
-  .col-3{grid-template-columns:1fr 1fr 1fr}
+/* CARDS */
+.card{background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:1.25rem;margin-bottom:1rem}
+.card-title{font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.8px;color:var(--navy);border-bottom:1px solid var(--border);padding-bottom:.6rem;margin-bottom:1rem;display:flex;align-items:center;gap:8px}
+.card-title svg{width:14px;height:14px}
 
-  /* ── form ── */
-  label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
-  input,select,textarea{width:100%;padding:8px 10px;font-size:13px;font-family:inherit;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);color:var(--text);transition:border-color .15s,box-shadow .15s}
-  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,58,107,.08)}
+/* GRID */
+.row{display:grid;gap:10px;margin-bottom:10px}
+.col-2{grid-template-columns:1fr 1fr}
+.col-3{grid-template-columns:1fr 1fr 1fr}
 
-  /* ── CIA table ── */
-  .cia-table{width:100%;border-collapse:collapse}
-  .cia-table th{font-size:11px;color:var(--muted);font-weight:600;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border)}
-  .cia-table td{padding:5px 8px}
-  .cia-table td:first-child{font-size:13px;font-weight:500;width:110px}
-  .cia-table input{padding:6px 8px;font-size:13px}
-  .cia-total{font-size:13px;font-weight:600;color:var(--navy);margin-top:8px;text-align:right}
+/* FORM */
+label{font-size:12px;color:var(--muted);display:block;margin-bottom:4px;font-weight:500}
+input,select,textarea{width:100%;padding:8px 10px;font-size:13px;font-family:inherit;border:1px solid var(--border);border-radius:var(--radius-sm);background:var(--white);color:var(--text);transition:border-color .15s,box-shadow .15s}
+input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);box-shadow:0 0 0 3px rgba(26,58,107,.08)}
 
-  /* ── items ── */
-  .items-header{display:grid;grid-template-columns:28px 120px 110px 1fr 140px 36px;gap:6px;margin-bottom:4px}
-  .items-header span{font-size:11px;color:var(--muted);font-weight:600}
-  .item-row{display:grid;grid-template-columns:28px 120px 110px 1fr 140px 36px;gap:6px;margin-bottom:6px;align-items:start}
-  .item-num{font-size:12px;color:var(--muted);text-align:center;padding-top:9px}
-  .item-row input{font-size:12px;padding:6px 8px}
-  .comprovante-cell{display:flex;flex-direction:column;gap:3px}
-  .comp-row{display:flex;gap:4px;align-items:center}
-  .comp-input{flex:1;font-size:12px;padding:6px 8px}
-  .upload-btn{flex-shrink:0;background:var(--navy-bg);border:none;border-radius:4px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy);transition:all .15s}
-  .upload-btn:hover{background:var(--navy);color:#fff}
-  .upload-btn svg{width:14px;height:14px}
-  .comp-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;text-decoration:none;cursor:pointer}
-  .comp-badge.ok{background:#dcfce7;color:#166534}
-  .comp-badge.local{background:#fef9c3;color:#854d0e}
-  .comp-badge.uploading{background:#e0e7ff;color:#3730a3;animation:pulse 1s infinite}
-  .remove-btn{background:none;border:none;color:#ccc;cursor:pointer;width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .15s;margin-top:2px}
-  .remove-btn:hover{background:#fee2e2;color:var(--red)}
-  .add-row-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:8px;font-size:12px;color:var(--muted);cursor:pointer;margin-top:4px;font-family:inherit;transition:all .15s}
-  .add-row-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-bg)}
-  .total-row-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px;font-size:13px;font-weight:600}
-  .total-desp{color:var(--red)}.total-rec{color:var(--green)}
+/* CIA TABLE */
+.cia-table{width:100%;border-collapse:collapse}
+.cia-table th{font-size:11px;color:var(--muted);font-weight:600;text-align:left;padding:4px 8px;border-bottom:1px solid var(--border)}
+.cia-table td{padding:5px 8px}
+.cia-table td:first-child{font-size:13px;font-weight:500;width:110px}
+.cia-table input{padding:6px 8px;font-size:13px}
+.cia-total{font-size:13px;font-weight:600;color:var(--navy);margin-top:8px;text-align:right}
 
-  /* ── observações dinâmicas ── */
-  .obs-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
-  .obs-marker{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap;padding-top:1px;min-width:20px}
-  .obs-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all .15s;flex-shrink:0}
-  .obs-remove:hover{background:#fee2e2;color:var(--red)}
-  .add-obs-btn{background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;margin-top:4px}
-  .add-obs-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-bg)}
+/* ITEMS */
+.items-header{display:grid;grid-template-columns:28px 120px 110px 1fr 140px 36px;gap:6px;margin-bottom:4px}
+.items-header span{font-size:11px;color:var(--muted);font-weight:600}
+.item-row{display:grid;grid-template-columns:28px 120px 110px 1fr 140px 36px;gap:6px;margin-bottom:6px;align-items:start}
+.item-num{font-size:12px;color:var(--muted);text-align:center;padding-top:9px}
+.item-row input{font-size:12px;padding:6px 8px}
+.comprovante-cell{display:flex;flex-direction:column;gap:3px}
+.comp-row{display:flex;gap:4px;align-items:center}
+.comp-input{flex:1;font-size:12px;padding:6px 8px}
+.upload-btn{flex-shrink:0;background:var(--navy-bg);border:none;border-radius:4px;width:30px;height:30px;cursor:pointer;display:flex;align-items:center;justify-content:center;color:var(--navy);transition:all .15s}
+.upload-btn:hover{background:var(--navy);color:#fff}
+.upload-btn svg{width:14px;height:14px}
+.comp-badge{display:inline-flex;align-items:center;gap:4px;font-size:10px;padding:2px 8px;border-radius:20px;font-weight:500;text-decoration:none;cursor:pointer}
+.comp-badge.ok{background:#dcfce7;color:#166534}
+.comp-badge.local{background:#fef9c3;color:#854d0e}
+.comp-badge.uploading{background:#e0e7ff;color:#3730a3;animation:pulse 1s infinite}
+.remove-btn{background:none;border:none;color:#ccc;cursor:pointer;width:28px;height:28px;border-radius:4px;display:flex;align-items:center;justify-content:center;font-size:18px;transition:all .15s;margin-top:2px}
+.remove-btn:hover{background:#fee2e2;color:var(--red)}
+.add-row-btn{width:100%;background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:8px;font-size:12px;color:var(--muted);cursor:pointer;margin-top:4px;font-family:inherit;transition:all .15s}
+.add-row-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-bg)}
+.total-row-bar{display:flex;justify-content:flex-end;align-items:center;gap:8px;margin-top:8px;font-size:13px;font-weight:600}
+.total-desp{color:var(--red)}.total-rec{color:var(--green)}
 
-  /* ── resumo ── */
-  .resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
-  .resumo-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem}
-  .resumo-item .r-label{font-size:11px;color:var(--muted);margin-bottom:3px}
-  .resumo-item .r-value{font-size:16px;font-weight:600}
-  .saldo-final-box{background:var(--navy);color:#fff;border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
-  .saldo-final-box .sf-label{font-size:12px;opacity:.7;text-transform:uppercase;letter-spacing:.5px}
-  .saldo-final-box .sf-value{font-size:24px;font-weight:700}
+/* OBS */
+.obs-row{display:flex;gap:6px;align-items:center;margin-bottom:6px}
+.obs-marker{font-size:12px;color:var(--muted);font-weight:600;white-space:nowrap;padding-top:1px;min-width:20px}
+.obs-remove{background:none;border:none;color:#ccc;cursor:pointer;font-size:16px;width:26px;height:26px;display:flex;align-items:center;justify-content:center;border-radius:4px;transition:all .15s;flex-shrink:0}
+.obs-remove:hover{background:#fee2e2;color:var(--red)}
+.add-obs-btn{background:none;border:1px dashed var(--border);border-radius:var(--radius-sm);padding:6px 12px;font-size:12px;color:var(--muted);cursor:pointer;font-family:inherit;transition:all .15s;margin-top:4px}
+.add-obs-btn:hover{border-color:var(--navy);color:var(--navy);background:var(--navy-bg)}
 
-  /* ── buttons ── */
-  .btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
-  .btn svg{width:16px;height:16px}
-  .btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy-light)}
-  .btn-primary:disabled{opacity:.5;cursor:not-allowed}
-  .btn-outline{background:#fff;color:var(--navy);border:1px solid var(--navy)}.btn-outline:hover{background:var(--navy-bg)}
-  .actions{display:flex;gap:10px;margin-top:1.25rem;flex-wrap:wrap}
+/* RESUMO */
+.resumo-grid{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin-bottom:1rem}
+.resumo-item{background:var(--surface);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem 1rem}
+.resumo-item .r-label{font-size:11px;color:var(--muted);margin-bottom:3px}
+.resumo-item .r-value{font-size:16px;font-weight:600}
+.saldo-final-box{background:var(--navy);color:#fff;border-radius:var(--radius);padding:1rem 1.25rem;display:flex;align-items:center;justify-content:space-between}
+.saldo-final-box .sf-label{font-size:12px;opacity:.7;text-transform:uppercase;letter-spacing:.5px}
+.saldo-final-box .sf-value{font-size:24px;font-weight:700}
 
-  /* ── toast ── */
-  #toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:8px}
-  .toast{display:flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.12);min-width:280px;max-width:380px;animation:slideIn .2s ease}
-  .toast.success{border-left:3px solid #4ade80}.toast.error{border-left:3px solid var(--red)}.toast.info{border-left:3px solid var(--navy)}
-  .toast-icon{font-size:16px;flex-shrink:0}
-  @keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
-  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:8px;padding:10px 20px;border-radius:var(--radius-sm);font-size:13px;font-weight:600;cursor:pointer;border:none;font-family:inherit;transition:all .15s}
+.btn svg{width:16px;height:16px}
+.btn-primary{background:var(--navy);color:#fff}.btn-primary:hover{background:var(--navy-light)}
+.btn-primary:disabled{opacity:.5;cursor:not-allowed}
+.btn-outline{background:#fff;color:var(--navy);border:1px solid var(--navy)}.btn-outline:hover{background:var(--navy-bg)}
+.btn-danger{background:#fff;color:var(--red);border:1px solid var(--red)}.btn-danger:hover{background:#fef2f2}
+.actions{display:flex;gap:10px;margin-top:1.25rem;flex-wrap:wrap}
 
-  /* ── config ── */
-  .config-section{margin-bottom:1.5rem}
-  .config-status{display:flex;align-items:center;gap:8px;padding:.75rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);font-size:13px;margin-top:.5rem}
-  .config-status.ok{border-color:#bbf7d0;background:#f0fdf4;color:#166534}
-  .config-status.erro{border-color:#fecaca;background:#fef2f2;color:var(--red)}
-  .step-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:var(--navy);color:#fff;border-radius:50%;font-size:11px;font-weight:700;flex-shrink:0;margin-right:4px}
+/* TOAST */
+#toast-container{position:fixed;bottom:1.5rem;right:1.5rem;z-index:9999;display:flex;flex-direction:column;gap:8px}
+.toast{display:flex;align-items:center;gap:10px;background:var(--white);border:1px solid var(--border);border-radius:var(--radius);padding:.75rem 1rem;font-size:13px;box-shadow:0 4px 20px rgba(0,0,0,.12);min-width:280px;max-width:380px;animation:slideIn .2s ease}
+.toast.success{border-left:3px solid #4ade80}.toast.error{border-left:3px solid var(--red)}.toast.info{border-left:3px solid var(--navy)}
+.toast-icon{font-size:16px;flex-shrink:0}
+@keyframes slideIn{from{transform:translateX(20px);opacity:0}to{transform:translateX(0);opacity:1}}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
 
-  /* ── preview ── */
-  .preview-table{width:100%;border-collapse:collapse;font-size:12px}
-  .preview-table th{background:var(--navy);color:#fff;padding:5px 8px;text-align:left;font-weight:600}
-  .preview-table td{padding:4px 8px;border-bottom:1px solid #f1f5f9}
-  .preview-table tr:nth-child(even) td{background:#f8fafc}
-  .preview-table .total-row td{background:#e8f0fe!important;font-weight:700}
-  .preview-table a{color:var(--navy);text-decoration:none}
-  .preview-table a:hover{text-decoration:underline}
+/* CONFIG */
+.config-status{display:flex;align-items:center;gap:8px;padding:.75rem 1rem;border-radius:var(--radius-sm);border:1px solid var(--border);background:var(--surface);font-size:13px;margin-top:.5rem}
+.config-status.ok{border-color:#bbf7d0;background:#f0fdf4;color:#166534}
+.config-status.erro{border-color:#fecaca;background:#fef2f2;color:var(--red)}
+.step-badge{display:inline-flex;align-items:center;justify-content:center;width:20px;height:20px;background:var(--navy);color:#fff;border-radius:50%;font-size:11px;font-weight:700;flex-shrink:0;margin-right:4px}
+.info-box{background:#f0f4fa;border:1px solid #c7d8f0;border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:12px;color:#1a3a6b;margin-bottom:1rem;line-height:1.6}
 
-  .file-input-hidden{display:none}
+/* PREVIEW */
+.preview-table{width:100%;border-collapse:collapse;font-size:12px}
+.preview-table th{background:var(--navy);color:#fff;padding:5px 8px;text-align:left;font-weight:600}
+.preview-table td{padding:4px 8px;border-bottom:1px solid #f1f5f9}
+.preview-table tr:nth-child(even) td{background:#f8fafc}
+.preview-table .total-row td{background:#e8f0fe!important;font-weight:700}
+.preview-table a{color:var(--navy);text-decoration:underline}
+.preview-table a:hover{opacity:.75}
 
-  /* ── cloudinary info box ── */
-  .cloud-info{background:#f0f4fa;border:1px solid #c7d8f0;border-radius:var(--radius-sm);padding:.75rem 1rem;font-size:12px;color:#1a3a6b;margin-bottom:1rem;line-height:1.6}
-  .cloud-info b{font-weight:700}
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);z-index:500;display:flex;align-items:center;justify-content:center}
+.modal-overlay.hidden{display:none}
+.modal-box{background:#fff;border-radius:var(--radius);padding:1.5rem;width:420px;max-width:95vw;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.modal-title{font-size:15px;font-weight:700;color:var(--navy);margin-bottom:.5rem}
+.modal-msg{font-size:13px;color:var(--muted);margin-bottom:1.25rem;line-height:1.5}
+.modal-actions{display:flex;gap:8px;justify-content:flex-end}
 
-  @media(max-width:700px){
-    .layout{grid-template-columns:1fr}
-    .sidebar{display:none}
-    .main{padding:1rem}
-    .col-3{grid-template-columns:1fr 1fr}
-    .items-header,.item-row{grid-template-columns:24px 1fr 90px 36px}
-    .items-header span:nth-child(3),.items-header span:nth-child(5),
-    .item-row>*:nth-child(3),.item-row>*:nth-child(5){display:none}
-  }
+.file-input-hidden{display:none}
+
+@media(max-width:700px){
+  .layout{grid-template-columns:1fr}.sidebar{display:none}.main{padding:1rem}
+  .col-3{grid-template-columns:1fr 1fr}
+  .items-header,.item-row{grid-template-columns:24px 1fr 90px 36px}
+  .items-header span:nth-child(3),.items-header span:nth-child(5),
+  .item-row>*:nth-child(3),.item-row>*:nth-child(5){display:none}
+}
 </style>
 </head>
 <body>
+
+<!-- LOGIN -->
+<div id="login-screen">
+  <div class="login-box">
+    <div class="login-logo">🔥</div>
+    <div class="login-title">SADJ — Balancetes</div>
+    <div class="login-sub">Academia de Bombeiro Militar Dom Pedro II</div>
+    <div class="login-field">
+      <label>Login</label>
+      <input type="text" id="login-user" placeholder="nome de usuário" autocomplete="username">
+    </div>
+    <div class="login-field">
+      <label>Senha</label>
+      <input type="password" id="login-pass" placeholder="••••••••" autocomplete="current-password" onkeydown="if(event.key==='Enter')fazerLogin()">
+    </div>
+    <button class="login-btn" onclick="fazerLogin()">Entrar</button>
+    <div class="login-err" id="login-err"></div>
+    <div class="login-footer">Diretoria Financeira SADJ 2025/2026</div>
+  </div>
+</div>
+
+<!-- APP (oculto até login) -->
+<div id="app" style="display:none">
 
 <div class="topbar">
   <div class="topbar-brand">
@@ -161,9 +200,16 @@
       <div class="topbar-sub">Academia de Bombeiro Militar Dom Pedro II</div>
     </div>
   </div>
-  <div class="topbar-status">
-    <div class="status-dot off" id="cloud-dot"></div>
-    <span id="cloud-label">Cloudinary não configurado</span>
+  <div class="topbar-right">
+    <div class="topbar-status">
+      <div class="status-dot off" id="drive-dot"></div>
+      <span id="drive-label">Drive não configurado</span>
+    </div>
+    <div class="user-badge">
+      <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
+      <span id="user-label">—</span>
+    </div>
+    <button class="logout-btn" onclick="fazerLogout()">Sair</button>
   </div>
 </div>
 
@@ -194,7 +240,6 @@
 
     <!-- LANÇAMENTO -->
     <div class="page active" id="page-lancamento">
-
       <div class="card">
         <div class="card-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
@@ -241,9 +286,7 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg>
           Despesas
         </div>
-        <div class="items-header">
-          <span>#</span><span>Data</span><span>Valor (R$)</span><span>Descrição</span><span>Comprovante</span><span></span>
-        </div>
+        <div class="items-header"><span>#</span><span>Data</span><span>Valor (R$)</span><span>Descrição</span><span>Comprovante</span><span></span></div>
         <div id="despesas-list"></div>
         <button class="add-row-btn" onclick="addItem('despesas')">+ Adicionar despesa</button>
         <div class="total-row-bar"><span>Despesa Total:</span><span class="total-desp" id="desp_total">R$ 0,00</span></div>
@@ -254,15 +297,12 @@
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="23 6 13.5 15.5 8.5 10.5 1 18"/><polyline points="17 6 23 6 23 12"/></svg>
           Receitas
         </div>
-        <div class="items-header">
-          <span>#</span><span>Data</span><span>Valor (R$)</span><span>Descrição</span><span>Comprovante</span><span></span>
-        </div>
+        <div class="items-header"><span>#</span><span>Data</span><span>Valor (R$)</span><span>Descrição</span><span>Comprovante</span><span></span></div>
         <div id="receitas-list"></div>
         <button class="add-row-btn" onclick="addItem('receitas')">+ Adicionar receita</button>
         <div class="total-row-bar"><span>Receita Total:</span><span class="total-rec" id="rec_total">R$ 0,00</span></div>
       </div>
 
-      <!-- OBSERVAÇÕES DINÂMICAS -->
       <div class="card">
         <div class="card-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
@@ -287,11 +327,11 @@
       </div>
 
       <div class="actions">
-        <button class="btn btn-primary" onclick="salvarTudo()" id="btn-salvar">
+        <button class="btn btn-primary" onclick="salvarBalancete()" id="btn-salvar">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>
-          Salvar na Planilha
+          Salvar PDF no Drive
         </button>
-        <button class="btn btn-outline" onclick="gerarPDF()">
+        <button class="btn btn-outline" onclick="gerarPDFDownload()">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><line x1="9" y1="15" x2="15" y2="15"/></svg>
           Baixar PDF
         </button>
@@ -309,7 +349,8 @@
         <div id="preview-body"></div>
       </div>
       <div class="actions">
-        <button class="btn btn-primary" onclick="gerarPDF()">Baixar PDF</button>
+        <button class="btn btn-primary" onclick="salvarBalancete()">Salvar PDF no Drive</button>
+        <button class="btn btn-outline" onclick="gerarPDFDownload()">Baixar PDF</button>
         <button class="btn btn-outline" onclick="showPage('lancamento')">← Voltar</button>
       </div>
     </div>
@@ -317,314 +358,284 @@
     <!-- HISTÓRICO -->
     <div class="page" id="page-historico">
       <div class="card">
-        <div class="card-title">Histórico de balancetes</div>
+        <div class="card-title">Histórico de Balancetes</div>
         <div id="historico-body" style="font-size:13px;color:var(--muted)">Nenhum balancete salvo ainda.</div>
+      </div>
+      <div class="actions">
+        <button class="btn btn-danger" onclick="confirmarResetHistorico()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4a1 1 0 0 1 1-1h4a1 1 0 0 1 1 1v2"/></svg>
+          Limpar histórico
+        </button>
       </div>
     </div>
 
     <!-- CONFIGURAÇÕES -->
     <div class="page" id="page-config">
-
-      <!-- Cloudinary -->
-      <div class="card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 10h-1.26A8 8 0 1 0 9 20h9a5 5 0 0 0 0-10z"/></svg>
-          Cloudinary — Upload de Comprovantes
-        </div>
-        <div class="cloud-info">
-          <b>Imagens (JPG/PNG):</b> armazenadas diretamente. <b>PDFs:</b> convertidos automaticamente para imagem — o link abre no navegador sem baixar. Qualquer pessoa com o link consegue visualizar.
-        </div>
-        <div class="row col-2">
-          <div>
-            <label>Cloud Name</label>
-            <input type="text" id="cfg-cloud-name" placeholder="ex: sadj2026" oninput="salvarConfig()">
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">No Dashboard do Cloudinary, abaixo do nome da conta</div>
-          </div>
-          <div>
-            <label>Upload Preset (modo: Unsigned)</label>
-            <input type="text" id="cfg-upload-preset" placeholder="ex: sadj_comprovantes" oninput="salvarConfig()">
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">Settings → Upload → Upload presets → Signing mode: Unsigned</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;align-items:center;margin-top:.5rem">
-          <button class="btn btn-outline" onclick="testarCloudinary()">Testar Cloudinary</button>
-          <div id="cloud-status" class="config-status" style="display:none;flex:1"></div>
-        </div>
-      </div>
-
-      <!-- Google Drive -->
       <div class="card">
         <div class="card-title">
           <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 19 22 19"/></svg>
-          Google Drive — Backup dos Comprovantes
+          Google Drive — Armazenamento
         </div>
-        <div class="cloud-info">
-          Os comprovantes são enviados <b>também para o Google Drive</b> da pasta que você escolher — independente da conta. Usa o mesmo Apps Script já configurado. Os arquivos ficam organizados por mês e tipo (DESPESAS / RECEITAS) e geram um link de <b>preview direto</b> (abre no Google Drive Viewer).
+        <div class="info-box">
+          Os comprovantes e PDFs são salvos no Drive em uma conta que você determina via Apps Script.
+          Os dados de configuração ficam <b>sincronizados entre todos os computadores</b> — qualquer usuário logado que salvar aqui atualiza para todos.
         </div>
         <div class="row col-2">
           <div>
             <label>URL do Apps Script (Web App)</label>
-            <input type="text" id="cfg-script-url" placeholder="https://script.google.com/macros/s/.../exec" oninput="salvarConfig()">
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">O mesmo script usado para salvar a planilha</div>
+            <input type="text" id="cfg-script-url" placeholder="https://script.google.com/macros/s/.../exec" oninput="salvarConfigLocal()">
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">Gerada ao publicar o Code.gs como Web App</div>
           </div>
           <div>
             <label>ID da pasta raiz no Drive</label>
-            <input type="text" id="cfg-pasta-id" placeholder="1ABC...xyz (da URL da pasta)" oninput="salvarConfig()">
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">Abra a pasta no Drive e copie o ID da URL após <code>/folders/</code></div>
+            <input type="text" id="cfg-pasta-id" placeholder="1ABC...xyz" oninput="salvarConfigLocal()">
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">Copie da URL da pasta: /folders/<b>ID</b></div>
           </div>
         </div>
-        <div style="margin-top:.5rem;font-size:12px;color:var(--muted);background:var(--surface);border-radius:var(--radius-sm);padding:.6rem .8rem;border:1px solid var(--border)">
-          💡 <b>Dica:</b> Você pode usar <b>só o Cloudinary</b>, <b>só o Drive</b>, ou <b>os dois juntos</b>. Se ambos estiverem configurados, o arquivo vai para os dois destinos automaticamente.
+        <div style="display:flex;gap:10px;margin-top:.5rem">
+          <button class="btn btn-primary" onclick="salvarConfigNoDrive()">Salvar configurações no Drive</button>
+          <button class="btn btn-outline" onclick="testarDrive()">Testar conexão</button>
+        </div>
+        <div id="drive-status" class="config-status" style="display:none;margin-top:.75rem"></div>
+        <div style="margin-top:.75rem;font-size:12px;color:var(--muted);background:var(--surface);border-radius:var(--radius-sm);padding:.6rem .8rem;border:1px solid var(--border)">
+          💡 Após clicar em <b>Salvar configurações no Drive</b>, todos os usuários que acessarem o sistema de qualquer computador carregarão automaticamente a mesma URL e ID.
         </div>
       </div>
 
-      <!-- Guia -->
       <div class="card">
-        <div class="card-title">Guia de Configuração</div>
-        <div style="font-size:13px;line-height:1.9;color:var(--text)">
-
-          <p style="font-weight:700;color:var(--navy);margin-bottom:.75rem">☁️ Cloudinary (PDFs com preview)</p>
-          <div style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1.5rem;padding-left:.5rem">
-            <div style="display:flex;gap:10px"><span class="step-badge">1</span><div>Acesse <a href="https://cloudinary.com" target="_blank" style="color:var(--navy);font-weight:600">cloudinary.com</a> e crie uma conta gratuita</div></div>
-            <div style="display:flex;gap:10px"><span class="step-badge">2</span><div>No <b>Dashboard</b>, copie o <b>Cloud Name</b></div></div>
-            <div style="display:flex;gap:10px"><span class="step-badge">3</span><div>Vá em <b>Settings → Upload → Upload presets → Add upload preset</b><br>Mude <b>Signing mode</b> para <b>Unsigned</b> → nome: <code style="background:#f1f5f9;padding:1px 5px;border-radius:3px">sadj_comprovantes</code> → Save</div></div>
-            <div style="display:flex;gap:10px"><span class="step-badge">4</span><div>Cole Cloud Name e Preset nos campos acima → clique em <b>Testar Cloudinary</b></div></div>
-          </div>
-
-          <p style="font-weight:700;color:var(--navy);margin-bottom:.75rem">📁 Google Drive (pasta da sua escolha)</p>
-          <div style="display:flex;flex-direction:column;gap:.75rem;margin-bottom:1rem;padding-left:.5rem">
-            <div style="display:flex;gap:10px"><span class="step-badge">1</span><div>Acesse <a href="https://script.google.com" target="_blank" style="color:var(--navy);font-weight:600">script.google.com</a> → projeto existente ou novo → cole o <code>Code.gs</code></div></div>
-            <div style="display:flex;gap:10px"><span class="step-badge">2</span><div>Abra a pasta de destino no Drive, copie o ID da URL e cole em <b>"ID da pasta raiz"</b></div></div>
-            <div style="display:flex;gap:10px"><span class="step-badge">3</span><div>No Apps Script: <b>Implantar → Nova implantação → App da Web</b><br>Executar como: <em>Eu</em> · Acesso: <em>Qualquer pessoa</em> → Implantar → copie a URL</div></div>
-            <div style="display:flex;gap:10px"><span class="step-badge">4</span><div>Cole a URL no campo <b>"URL do Apps Script"</b> acima</div></div>
-          </div>
-
-          <p style="background:#fef9c3;border:1px solid #fde047;border-radius:var(--radius-sm);padding:.6rem .8rem;font-size:12px">
-            ⚠️ No <code>Code.gs</code>, substitua <code>COLE_O_ID_DA_PASTA_RAIZ_AQUI</code> pelo ID da sua pasta antes de publicar.
-          </p>
+        <div class="card-title">Guia de Configuração — Passo a Passo</div>
+        <div style="font-size:13px;line-height:1.9;color:var(--text);display:flex;flex-direction:column;gap:.75rem">
+          <div style="display:flex;gap:10px"><span class="step-badge">1</span><div>Acesse <a href="https://script.google.com" target="_blank" style="color:var(--navy);font-weight:600">script.google.com</a> → Novo projeto → cole o conteúdo do <code>Code.gs</code></div></div>
+          <div style="display:flex;gap:10px"><span class="step-badge">2</span><div>No <code>Code.gs</code>, substitua <code>COLE_O_ID_DA_PASTA_RAIZ_AQUI</code> pelo ID da sua pasta do Drive</div></div>
+          <div style="display:flex;gap:10px"><span class="step-badge">3</span><div><b>Implantar → Nova implantação → App da Web</b> → Executar como: <em>Eu</em> · Acesso: <em>Qualquer pessoa</em> → Implantar → copie a URL</div></div>
+          <div style="display:flex;gap:10px"><span class="step-badge">4</span><div>Cole a URL e o ID da pasta nos campos acima → clique em <b>Salvar configurações no Drive</b></div></div>
+          <div style="display:flex;gap:10px"><span class="step-badge">5</span><div>✓ Pronto! Os PDFs serão salvos em <code>PASTA_RAIZ/BALANCETES_SISTEMA/</code> e os comprovantes em <code>PASTA_RAIZ/MES_ANO/COMPROVANTES/</code></div></div>
         </div>
       </div>
     </div>
 
   </main>
+</div><!-- /layout -->
+</div><!-- /app -->
+
+<!-- MODAL DE CONFIRMAÇÃO -->
+<div class="modal-overlay hidden" id="modal-overlay">
+  <div class="modal-box">
+    <div class="modal-title" id="modal-title">Confirmar ação</div>
+    <div class="modal-msg" id="modal-msg"></div>
+    <div class="modal-actions">
+      <button class="btn btn-outline" onclick="fecharModal()">Cancelar</button>
+      <button class="btn btn-danger" id="modal-confirm-btn">Confirmar</button>
+    </div>
+  </div>
 </div>
 
 <div id="toast-container"></div>
 <input type="file" id="file-input-global" class="file-input-hidden" accept="image/*,.pdf">
 
 <script>
-// ─────────────────────────────────────────────
-//  ESTADO
-// ─────────────────────────────────────────────
-let despesas = [emptyItem()];
-let receitas = [emptyItem()];
-let observacoes = [
-  { texto: 'Valor a ser restituído à SADJ - R$ 0,00' }
-];
-let uploadingItem = null;
-let cfg = { cloudName: '', uploadPreset: '', scriptUrl: '', pastaId: '' };
+// ═══════════════════════════════════════════════════
+//  AUTH
+// ═══════════════════════════════════════════════════
+const USERS = { presidente: 'balancete', tesoureiro: 'balancete' };
+let usuarioAtual = null;
 
-function emptyItem() {
-  return { data: '', valor: '', desc: '', comp: '', url: '', publicId: '' };
-}
-
-// ─────────────────────────────────────────────
-//  CONFIG
-// ─────────────────────────────────────────────
-function carregarConfig() {
-  try {
-    const s = localStorage.getItem('sadj_cfg');
-    if (s) {
-      cfg = { ...cfg, ...JSON.parse(s) };
-      if (cfg.cloudName)    document.getElementById('cfg-cloud-name').value    = cfg.cloudName;
-      if (cfg.uploadPreset) document.getElementById('cfg-upload-preset').value = cfg.uploadPreset;
-      if (cfg.scriptUrl)    document.getElementById('cfg-script-url').value    = cfg.scriptUrl;
-      if (cfg.pastaId)      document.getElementById('cfg-pasta-id').value      = cfg.pastaId;
-    }
-  } catch(e) {}
-  atualizarStatusCloud();
-}
-
-function salvarConfig() {
-  cfg.cloudName    = document.getElementById('cfg-cloud-name').value.trim();
-  cfg.uploadPreset = document.getElementById('cfg-upload-preset').value.trim();
-  cfg.scriptUrl    = document.getElementById('cfg-script-url').value.trim();
-  cfg.pastaId      = document.getElementById('cfg-pasta-id').value.trim();
-  localStorage.setItem('sadj_cfg', JSON.stringify(cfg));
-  atualizarStatusCloud();
-}
-
-function atualizarStatusCloud() {
-  const ok = cfg.cloudName && cfg.uploadPreset;
-  document.getElementById('cloud-dot').className = 'status-dot' + (ok ? '' : ' off');
-  document.getElementById('cloud-label').textContent = ok
-    ? 'Cloudinary configurado (' + cfg.cloudName + ')'
-    : 'Cloudinary não configurado';
-}
-
-async function testarCloudinary() {
-  const el = document.getElementById('cloud-status');
-  el.style.display = 'flex'; el.className = 'config-status';
-  el.textContent = 'Testando...';
-  if (!cfg.cloudName || !cfg.uploadPreset) {
-    el.className = 'config-status erro';
-    el.textContent = '✗ Preencha o Cloud Name e o Upload Preset primeiro.';
+function fazerLogin() {
+  const user = document.getElementById('login-user').value.trim().toLowerCase();
+  const pass = document.getElementById('login-pass').value;
+  const err  = document.getElementById('login-err');
+  if (!USERS[user] || USERS[user] !== pass) {
+    err.textContent = 'Login ou senha incorretos.';
+    document.getElementById('login-pass').value = '';
     return;
   }
-  // Teste: faz upload de um pixel transparente (1x1 PNG em base64)
+  err.textContent = '';
+  usuarioAtual = user;
+  sessionStorage.setItem('sadj_user', user);
+  document.getElementById('login-screen').style.display = 'none';
+  document.getElementById('app').style.display = 'block';
+  document.getElementById('user-label').textContent = user.charAt(0).toUpperCase() + user.slice(1);
+  iniciarApp();
+}
+
+function fazerLogout() {
+  sessionStorage.removeItem('sadj_user');
+  usuarioAtual = null;
+  document.getElementById('login-screen').style.display = 'flex';
+  document.getElementById('app').style.display = 'none';
+  document.getElementById('login-user').value = '';
+  document.getElementById('login-pass').value = '';
+}
+
+// Auto-login se sessão ainda ativa
+(function() {
+  const u = sessionStorage.getItem('sadj_user');
+  if (u && USERS[u]) {
+    usuarioAtual = u;
+    document.getElementById('login-screen').style.display = 'none';
+    document.getElementById('app').style.display = 'block';
+    document.getElementById('user-label').textContent = u.charAt(0).toUpperCase() + u.slice(1);
+    iniciarApp();
+  }
+})();
+
+// ═══════════════════════════════════════════════════
+//  ESTADO
+// ═══════════════════════════════════════════════════
+let despesas   = [emptyItem()];
+let receitas   = [emptyItem()];
+let observacoes = [{ texto: 'Valor a ser restituído à SADJ - R$ 0,00' }];
+let uploadingItem = null;
+let cfg = { scriptUrl: '', pastaId: '' };
+
+function emptyItem() {
+  return { data:'', valor:'', desc:'', comp:'', url:'' };
+}
+
+// ═══════════════════════════════════════════════════
+//  CONFIG — LOCAL + DRIVE (compartilhado)
+// ═══════════════════════════════════════════════════
+function salvarConfigLocal() {
+  cfg.scriptUrl = document.getElementById('cfg-script-url').value.trim();
+  cfg.pastaId   = document.getElementById('cfg-pasta-id').value.trim();
+  localStorage.setItem('sadj_cfg', JSON.stringify(cfg));
+  atualizarStatusDrive();
+}
+
+async function salvarConfigNoDrive() {
+  salvarConfigLocal();
+  if (!cfg.scriptUrl) { toast('Configure a URL do Apps Script primeiro.', 'error'); return; }
   try {
-    const testBlob = await fetch('data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mNk+M9QDwADhgGAWjR9awAAAABJRU5ErkJggg==').then(r => r.blob());
-    const result = await uploadToCloudinary(testBlob, 'teste_conexao');
-    if (result.secure_url) {
-      el.className = 'config-status ok';
-      el.textContent = '✓ Cloudinary conectado com sucesso! Upload funcionando.';
-      atualizarStatusCloud();
-    } else throw new Error('Resposta inesperada');
+    const r = await chamarScript({ acao: 'salvarConfig', cfg });
+    if (r.erro) throw new Error(r.erro);
+    toast('✓ Configurações salvas no Drive e sincronizadas!', 'success');
+    atualizarStatusDrive();
+  } catch(e) {
+    toast('Erro ao salvar no Drive: ' + e.message, 'error');
+  }
+}
+
+async function carregarConfig() {
+  // 1. Carrega local primeiro (rápido)
+  try {
+    const s = localStorage.getItem('sadj_cfg');
+    if (s) cfg = { ...cfg, ...JSON.parse(s) };
+    if (cfg.scriptUrl) document.getElementById('cfg-script-url').value = cfg.scriptUrl;
+    if (cfg.pastaId)   document.getElementById('cfg-pasta-id').value   = cfg.pastaId;
+  } catch(e) {}
+
+  // 2. Tenta buscar do Drive (fonte da verdade compartilhada)
+  if (cfg.scriptUrl) {
+    try {
+      const r = await chamarScript({ acao: 'carregarConfig' });
+      if (r.cfg && r.cfg.scriptUrl) {
+        cfg = { ...cfg, ...r.cfg };
+        document.getElementById('cfg-script-url').value = cfg.scriptUrl;
+        document.getElementById('cfg-pasta-id').value   = cfg.pastaId || '';
+        localStorage.setItem('sadj_cfg', JSON.stringify(cfg));
+      }
+      // Carrega histórico compartilhado
+      if (r.historico) {
+        localStorage.setItem('sadj_hist', JSON.stringify(r.historico));
+        renderHistorico();
+      }
+    } catch(e) { /* silencioso */ }
+  }
+  atualizarStatusDrive();
+}
+
+function atualizarStatusDrive() {
+  const ok = !!cfg.scriptUrl;
+  document.getElementById('drive-dot').className = 'status-dot' + (ok ? '' : ' off');
+  document.getElementById('drive-label').textContent = ok ? 'Drive conectado' : 'Drive não configurado';
+}
+
+async function testarDrive() {
+  const el = document.getElementById('drive-status');
+  el.style.display = 'flex'; el.className = 'config-status';
+  el.textContent = 'Testando…';
+  try {
+    const r = await chamarScript({ acao: 'listarPastas' });
+    if (r.erro) throw new Error(r.erro);
+    el.className = 'config-status ok';
+    el.innerHTML = '✓ Drive conectado! Pastas: ' + (r.pastas||[]).map(p=>p.nome).join(', ');
+    atualizarStatusDrive();
   } catch(e) {
     el.className = 'config-status erro';
-    el.textContent = '✗ Erro: ' + e.message + '. Verifique Cloud Name e Preset.';
+    el.innerHTML = '✗ ' + e.message;
   }
 }
 
-// ─────────────────────────────────────────────
-//  CLOUDINARY UPLOAD
-//  PDFs são enviados como resource_type=image
-//  com format=jpg — o Cloudinary converte a
-//  primeira página em imagem visualizável.
-//  O link retornado abre direto no navegador.
-// ─────────────────────────────────────────────
-async function uploadToCloudinary(file, publicId) {
-  if (!cfg.cloudName || !cfg.uploadPreset) throw new Error('Cloudinary não configurado');
-  const isPdf = file.type === 'application/pdf' || (file.name && file.name.toLowerCase().endsWith('.pdf'));
-  const fd = new FormData();
-  fd.append('file', file);
-  fd.append('upload_preset', cfg.uploadPreset);
-  fd.append('public_id', publicId);
-  if (isPdf) {
-    // Força conversão do PDF para imagem JPG (primeira página)
-    // resource_type=image + format=jpg → URL visualizável no navegador
-    fd.append('format', 'jpg');
-    fd.append('flags', 'attachment:false');
-  }
-  // PDFs também usam resource_type=image quando queremos preview
-  const url = `https://api.cloudinary.com/v1_1/${cfg.cloudName}/image/upload`;
-  const resp = await fetch(url, { method: 'POST', body: fd });
-  if (!resp.ok) {
-    const err = await resp.json().catch(() => ({}));
-    throw new Error(err.error?.message || 'HTTP ' + resp.status);
-  }
-  const result = await resp.json();
-  // Para PDFs convertidos, a URL já é a imagem JPG da primeira página
-  // Se o original tiver múltiplas páginas, adicionamos /fl_attachment:false
-  // para garantir que abre no navegador (não faz download)
-  if (isPdf && result.secure_url) {
-    result.secure_url = result.secure_url.replace('/upload/', '/upload/fl_attachment:false/');
-  }
-  return result;
+async function chamarScript(dados) {
+  if (!cfg.scriptUrl) throw new Error('URL do Apps Script não configurada.');
+  const resp = await fetch(cfg.scriptUrl, {
+    method: 'POST',
+    headers: { 'Content-Type': 'text/plain' },
+    body: JSON.stringify(dados)
+  });
+  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  return await resp.json();
 }
 
-// ─────────────────────────────────────────────
-//  TRIGGER UPLOAD
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  UPLOAD DE COMPROVANTE → DRIVE
+// ═══════════════════════════════════════════════════
 function triggerUpload(type, index) {
   uploadingItem = { type, index };
   const fi = document.getElementById('file-input-global');
-  fi.value = '';
-  fi.onchange = handleFileSelected;
-  fi.click();
+  fi.value = ''; fi.onchange = handleFileSelected; fi.click();
 }
 
 async function handleFileSelected(e) {
   const file = e.target.files[0];
   if (!file || !uploadingItem) return;
   const { type, index } = uploadingItem;
-  const arr = type === 'despesas' ? despesas : receitas;
+  const arr  = type === 'despesas' ? despesas : receitas;
   const item = arr[index];
 
-  // Gera código automático
-  const mes = document.getElementById('mes').value;
-  const ano = document.getElementById('ano').value;
-  const mesAbrev = mes.substring(0, 3).toUpperCase();
+  const mes  = document.getElementById('mes').value;
+  const ano  = document.getElementById('ano').value;
+  const mesAbrev = mes.substring(0,3).toUpperCase();
   const tipoAbrev = type === 'despesas' ? 'D' : 'R';
-  const num = String(index + 1).padStart(2, '0');
-  const nomeAuto = `${tipoAbrev}_${num}_${mesAbrev}_${String(ano).slice(-2)}`;
-  if (!item.comp) item.comp = nomeAuto;
+  const num = String(index+1).padStart(2,'0');
+  if (!item.comp) item.comp = `${tipoAbrev}_${num}_${mesAbrev}_${String(ano).slice(-2)}`;
 
-  // Estado: enviando
   item._uploading = true;
   renderItems(type);
 
-  const isPdf = file.type === 'application/pdf' || file.name.toLowerCase().endsWith('.pdf');
-  const ext   = file.name.split('.').pop().toLowerCase();
-  const nomeArquivo = item.comp + '.' + ext;
-
-  // ── Tenta Cloudinary primeiro ──
-  if (cfg.cloudName && cfg.uploadPreset) {
-    toast('Enviando ' + nomeArquivo + ' para a nuvem…', 'info');
-    try {
-      const publicId = `sadj/${ano}/${mes}/${item.comp}`;
-      const result = await uploadToCloudinary(file, publicId);
-      item.url = result.secure_url;
-      item.publicId = result.public_id;
-      item._uploading = false;
-      renderItems(type);
-      toast('✓ Comprovante salvo no Cloudinary! Link clicável gerado.', 'success');
-      // Mesmo salvando no Cloudinary, também envia pro Drive se configurado
-      if (cfg.scriptUrl) enviarArquivoParaDrive(file, nomeArquivo, type, mes, ano);
-      return;
-    } catch(err) {
-      toast('Cloudinary: ' + err.message + '. Tentando Drive…', 'error');
-    }
+  if (!cfg.scriptUrl) {
+    item._uploading = false;
+    renderItems(type);
+    toast('Drive não configurado. Vá em Configurações.', 'error');
+    return;
   }
 
-  // ── Fallback / principal: Google Drive via Apps Script ──
-  if (cfg.scriptUrl) {
-    toast('Enviando ' + nomeArquivo + ' para o Google Drive…', 'info');
-    try {
-      const driveUrl = await enviarArquivoParaDrive(file, nomeArquivo, type, mes, ano);
-      if (driveUrl) {
-        item.url = driveUrl;
-        item._uploading = false;
-        renderItems(type);
-        toast('✓ Comprovante salvo no Google Drive!', 'success');
-        return;
-      }
-    } catch(err) {
-      toast('Drive: ' + err.message, 'error');
-    }
-  }
-
-  // ── Sem nenhuma nuvem configurada: salva local ──
-  item._uploading = false;
-  item._localBlob = URL.createObjectURL(file);
-  renderItems(type);
-  toast('Nuvem não configurada. Arquivo salvo localmente.', 'error');
-}
-
-// Envia arquivo para o Drive via Apps Script e retorna a URL de visualização
-async function enviarArquivoParaDrive(file, nomeArquivo, type, mes, ano) {
-  const base64 = await fileToBase64(file);
-  const r = await fetch(cfg.scriptUrl, {
-    method: 'POST',
-    headers: { 'Content-Type': 'text/plain' },
-    body: JSON.stringify({
+  try {
+    toast('Enviando ' + file.name + ' para o Drive…', 'info');
+    const ext = file.name.split('.').pop().toLowerCase();
+    const nomeArquivo = item.comp + '.' + ext;
+    const base64 = await fileToBase64(file);
+    const r = await chamarScript({
       acao: 'uploadComprovante',
       mes, ano,
       tipo: type === 'despesas' ? 'despesa' : 'receita',
-      nomeArquivo,
-      mimeType: file.type,
-      base64,
+      nomeArquivo, mimeType: file.type, base64,
       pastaId: cfg.pastaId || ''
-    })
-  });
-  const j = await r.json();
-  if (j.erro) throw new Error(j.erro);
-  // Retorna URL de preview do Drive (abre no navegador, não faz download)
-  return j.urlPreview || j.url;
+    });
+    if (r.erro) throw new Error(r.erro);
+    item.url = r.urlPreview || r.url;
+    item._uploading = false;
+    renderItems(type);
+    toast('✓ Comprovante salvo no Drive!', 'success');
+  } catch(err) {
+    item._uploading = false;
+    renderItems(type);
+    toast('Erro no upload: ' + err.message, 'error');
+  }
 }
 
 function fileToBase64(file) {
-  return new Promise((res, rej) => {
+  return new Promise((res,rej) => {
     const r = new FileReader();
     r.onload = () => res(r.result.split(',')[1]);
     r.onerror = rej;
@@ -632,426 +643,342 @@ function fileToBase64(file) {
   });
 }
 
-
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  RENDER ITEMS
+// ═══════════════════════════════════════════════════
 function renderItems(type) {
-  const list = document.getElementById(type + '-list');
-  const arr  = type === 'despesas' ? despesas : receitas;
+  const list = document.getElementById(type+'-list');
+  const arr  = type==='despesas' ? despesas : receitas;
   list.innerHTML = '';
-
-  arr.forEach((item, i) => {
+  arr.forEach((item,i) => {
     const div = document.createElement('div');
     div.className = 'item-row';
-
     let badge = '';
     if (item._uploading) {
       badge = `<span class="comp-badge uploading">Enviando…</span>`;
     } else if (item.url) {
-      badge = `<a class="comp-badge ok" href="${item.url}" target="_blank" title="Visualizar comprovante">
-        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>
-        Ver arquivo
-      </a>`;
-    } else if (item._localBlob) {
-      badge = `<a class="comp-badge local" href="${item._localBlob}" target="_blank">Local</a>`;
+      badge = `<a class="comp-badge ok" href="${item.url}" target="_blank">
+        <svg width="10" height="10" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="20 6 9 17 4 12"/></svg>Ver arquivo</a>`;
     }
-
     div.innerHTML = `
-      <div class="item-num">${i + 1}</div>
+      <div class="item-num">${i+1}</div>
       <div><input type="date" value="${item.data}" onchange="updateItem('${type}',${i},'data',this.value)"></div>
       <div><input type="number" step="0.01" placeholder="0,00" value="${item.valor}" onchange="updateItem('${type}',${i},'valor',this.value)"></div>
-      <div><input type="text" placeholder="Descrição..." value="${escHtml(item.desc)}" onchange="updateItem('${type}',${i},'desc',this.value)"></div>
+      <div><input type="text" placeholder="Descrição..." value="${escH(item.desc)}" onchange="updateItem('${type}',${i},'desc',this.value)"></div>
       <div class="comprovante-cell">
         <div class="comp-row">
-          <input type="text" class="comp-input" placeholder="Cód. comprovante" value="${escHtml(item.comp)}" onchange="updateItem('${type}',${i},'comp',this.value)">
-          <button class="upload-btn" onclick="triggerUpload('${type}',${i})" title="Enviar arquivo para a nuvem">
+          <input type="text" class="comp-input" placeholder="Cód. comprovante" value="${escH(item.comp)}" onchange="updateItem('${type}',${i},'comp',this.value)">
+          <button class="upload-btn" onclick="triggerUpload('${type}',${i})" title="Enviar para o Drive">
             <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="16 16 12 12 8 16"/><line x1="12" y1="12" x2="12" y2="21"/><path d="M20.39 18.39A5 5 0 0 0 18 9h-1.26A8 8 0 1 0 3 16.3"/></svg>
           </button>
-        </div>
-        ${badge}
+        </div>${badge}
       </div>
-      <button class="remove-btn" onclick="removeItem('${type}',${i})" title="Remover linha">×</button>
-    `;
+      <button class="remove-btn" onclick="removeItem('${type}',${i})">×</button>`;
     list.appendChild(div);
   });
 }
+function escH(s){ return (s||'').replace(/"/g,'&quot;'); }
+function updateItem(type,i,field,val){ (type==='despesas'?despesas:receitas)[i][field]=val; updateCalc(); }
+function addItem(type){ (type==='despesas'?despesas:receitas).push(emptyItem()); renderItems(type); updateCalc(); }
+function removeItem(type,i){ const a=type==='despesas'?despesas:receitas; if(a.length===1){a[0]=emptyItem();}else a.splice(i,1); renderItems(type); updateCalc(); }
 
-function escHtml(s) { return (s || '').replace(/"/g, '&quot;'); }
-
-function updateItem(type, i, field, val) {
-  (type === 'despesas' ? despesas : receitas)[i][field] = val;
-  updateCalc();
-}
-function addItem(type) {
-  (type === 'despesas' ? despesas : receitas).push(emptyItem());
-  renderItems(type); updateCalc();
-}
-function removeItem(type, i) {
-  const arr = type === 'despesas' ? despesas : receitas;
-  if (arr.length === 1) { arr[0] = emptyItem(); } else arr.splice(i, 1);
-  renderItems(type); updateCalc();
-}
-
-// ─────────────────────────────────────────────
-//  OBSERVAÇÕES DINÂMICAS
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  OBSERVAÇÕES
+// ═══════════════════════════════════════════════════
 function renderObs() {
   const list = document.getElementById('obs-list');
   list.innerHTML = '';
-  observacoes.forEach((ob, i) => {
+  observacoes.forEach((ob,i) => {
     const div = document.createElement('div');
     div.className = 'obs-row';
     div.innerHTML = `
-      <span class="obs-marker">*${i + 1}</span>
-      <input type="text" value="${escHtml(ob.texto)}" placeholder="Digite a observação..." onchange="observacoes[${i}].texto = this.value" style="flex:1">
-      <button class="obs-remove" onclick="removeObs(${i})" title="Remover">×</button>
-    `;
+      <span class="obs-marker">*${i+1}</span>
+      <input type="text" value="${escH(ob.texto)}" placeholder="Digite a observação..." onchange="observacoes[${i}].texto=this.value" style="flex:1">
+      <button class="obs-remove" onclick="removeObs(${i})">×</button>`;
     list.appendChild(div);
   });
 }
+function addObs(){ observacoes.push({texto:''}); renderObs(); }
+function removeObs(i){ if(observacoes.length===1){observacoes[0].texto='';renderObs();return;} observacoes.splice(i,1); renderObs(); }
 
-function addObs() {
-  observacoes.push({ texto: '' });
-  renderObs();
-}
-function removeObs(i) {
-  if (observacoes.length === 1) { observacoes[0].texto = ''; renderObs(); return; }
-  observacoes.splice(i, 1);
-  renderObs();
-}
-
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  CÁLCULOS
-// ─────────────────────────────────────────────
-function fmtBRL(v) {
-  return 'R$ ' + parseFloat(v || 0).toLocaleString('pt-BR', { minimumFractionDigits: 2, maximumFractionDigits: 2 });
-}
+// ═══════════════════════════════════════════════════
+function fmtBRL(v){ return 'R$ '+parseFloat(v||0).toLocaleString('pt-BR',{minimumFractionDigits:2,maximumFractionDigits:2}); }
 
 function updateCalc() {
-  const si  = parseFloat(document.getElementById('saldo_inicial').value || 0);
-  const totalQtd  = ['cia1','cia2','cia3','cia4'].reduce((s, id) => s + parseInt(document.getElementById(id+'_qtd').value || 0), 0);
-  const totalMens = ['cia1','cia2','cia3','cia4'].reduce((s, id) => s + parseFloat(document.getElementById(id+'_arr').value || 0), 0);
-  const totalDesp = despesas.reduce((s, i) => s + parseFloat(i.valor || 0), 0);
-  const totalRec  = receitas.reduce((s, i) => s + parseFloat(i.valor || 0), 0);
-  const sf = si + totalMens - totalDesp + totalRec;
-  document.getElementById('total_qtd').textContent = totalQtd;
-  document.getElementById('total_arr').textContent = fmtBRL(totalMens);
-  document.getElementById('desp_total').textContent = fmtBRL(totalDesp);
-  document.getElementById('rec_total').textContent  = fmtBRL(totalRec);
-  document.getElementById('r_anterior').textContent = fmtBRL(si);
-  document.getElementById('r_mens').textContent     = fmtBRL(totalMens);
-  document.getElementById('r_desp').textContent     = fmtBRL(totalDesp);
-  document.getElementById('r_rec').textContent      = fmtBRL(totalRec);
-  document.getElementById('r_saldo_final').textContent = fmtBRL(sf);
+  const si = parseFloat(document.getElementById('saldo_inicial').value||0);
+  const totalQtd  = ['cia1','cia2','cia3','cia4'].reduce((s,id)=>s+parseInt(document.getElementById(id+'_qtd').value||0),0);
+  const totalMens = ['cia1','cia2','cia3','cia4'].reduce((s,id)=>s+parseFloat(document.getElementById(id+'_arr').value||0),0);
+  const totalDesp = despesas.reduce((s,i)=>s+parseFloat(i.valor||0),0);
+  const totalRec  = receitas.reduce((s,i)=>s+parseFloat(i.valor||0),0);
+  const sf = si+totalMens-totalDesp+totalRec;
+  document.getElementById('total_qtd').textContent=totalQtd;
+  document.getElementById('total_arr').textContent=fmtBRL(totalMens);
+  document.getElementById('desp_total').textContent=fmtBRL(totalDesp);
+  document.getElementById('rec_total').textContent=fmtBRL(totalRec);
+  document.getElementById('r_anterior').textContent=fmtBRL(si);
+  document.getElementById('r_mens').textContent=fmtBRL(totalMens);
+  document.getElementById('r_desp').textContent=fmtBRL(totalDesp);
+  document.getElementById('r_rec').textContent=fmtBRL(totalRec);
+  document.getElementById('r_saldo_final').textContent=fmtBRL(sf);
 }
 
-// ─────────────────────────────────────────────
-//  DADOS CONSOLIDADOS
-// ─────────────────────────────────────────────
 function getDados() {
-  const si  = parseFloat(document.getElementById('saldo_inicial').value || 0);
+  const si  = parseFloat(document.getElementById('saldo_inicial').value||0);
   const mes = document.getElementById('mes').value;
   const ano = document.getElementById('ano').value;
-  const mv  = parseFloat(document.getElementById('msg_valor').value || 70);
-  const cias = ['cia1','cia2','cia3','cia4'].map((id, i) => ({
-    nome: ['1ª CIA','2ª CIA','3ª CIA','4ª CIA'][i],
-    qtd: parseInt(document.getElementById(id+'_qtd').value || 0),
-    np:  parseInt(document.getElementById(id+'_np').value  || 0),
-    arr: parseFloat(document.getElementById(id+'_arr').value || 0)
+  const mv  = parseFloat(document.getElementById('msg_valor').value||70);
+  const cias = ['cia1','cia2','cia3','cia4'].map((id,i)=>({
+    nome:['1ª CIA','2ª CIA','3ª CIA','4ª CIA'][i],
+    qtd:parseInt(document.getElementById(id+'_qtd').value||0),
+    np:parseInt(document.getElementById(id+'_np').value||0),
+    arr:parseFloat(document.getElementById(id+'_arr').value||0)
   }));
-  const totalMens = cias.reduce((s, c) => s + c.arr, 0);
-  const totalDesp = despesas.reduce((s, i) => s + parseFloat(i.valor || 0), 0);
-  const totalRec  = receitas.reduce((s, i) => s + parseFloat(i.valor || 0), 0);
+  const totalMens=cias.reduce((s,c)=>s+c.arr,0);
+  const totalDesp=despesas.reduce((s,i)=>s+parseFloat(i.valor||0),0);
+  const totalRec=receitas.reduce((s,i)=>s+parseFloat(i.valor||0),0);
   return {
-    mes, ano, saldoInicial: si, mensalidadeTabelada: mv,
-    cias, totalMensalidades: totalMens,
-    despesas: despesas.map(d => ({ ...d })),
-    receitas: receitas.map(r => ({ ...r })),
-    totalDespesas: totalDesp, totalReceitas: totalRec,
-    saldoFinal: si + totalMens - totalDesp + totalRec,
-    presidente: document.getElementById('presidente').value,
-    tesoureira: document.getElementById('tesoureira').value,
-    observacoes: observacoes.map((o, i) => ({ marcador: `*${i+1}`, texto: o.texto })).filter(o => o.texto)
+    mes,ano,saldoInicial:si,mensalidadeTabelada:mv,
+    cias,totalMensalidades:totalMens,
+    despesas:despesas.map(d=>({...d})),
+    receitas:receitas.map(r=>({...r})),
+    totalDespesas:totalDesp,totalReceitas:totalRec,
+    saldoFinal:si+totalMens-totalDesp+totalRec,
+    presidente:document.getElementById('presidente').value,
+    tesoureira:document.getElementById('tesoureira').value,
+    observacoes:observacoes.map((o,i)=>({marcador:`*${i+1}`,texto:o.texto})).filter(o=>o.texto)
   };
 }
 
-// ─────────────────────────────────────────────
-//  SALVAR NA PLANILHA (Apps Script)
-// ─────────────────────────────────────────────
-async function salvarTudo() {
+// ═══════════════════════════════════════════════════
+//  SALVAR PDF NO DRIVE (pasta BALANCETES_SISTEMA)
+// ═══════════════════════════════════════════════════
+async function salvarBalancete() {
+  if (!cfg.scriptUrl) { toast('Configure o Drive em Configurações.', 'error'); showPage('config'); return; }
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true;
   btn.innerHTML = '<span style="opacity:.6;font-size:12px">Salvando…</span>';
   try {
-    const dados = getDados();
-    if (cfg.scriptUrl) {
-      const r = await fetch(cfg.scriptUrl, { method: 'POST', body: JSON.stringify({ acao: 'salvarBalancete', ...dados }), headers: { 'Content-Type': 'text/plain' } });
-      const j = await r.json();
-      if (j.erro) throw new Error(j.erro);
-      salvarHistorico(dados, j);
-      toast(`✓ Balancete ${dados.mes}/${dados.ano} salvo na planilha!`, 'success');
-    } else {
-      salvarHistorico(dados, {});
-      toast('Planilha não configurada. PDF pode ser baixado normalmente.', 'info');
-    }
+    const d = getDados();
+    const pdfBase64 = await gerarPdfBase64(d);
+    const r = await chamarScript({
+      acao: 'salvarPdfBalancete',
+      mes: d.mes, ano: d.ano,
+      pastaId: cfg.pastaId || '',
+      pdfBase64
+    });
+    if (r.erro) throw new Error(r.erro);
+    // Registra no histórico compartilhado
+    await salvarHistorico(d, r.urlPdf);
+    toast(`✓ Balancete ${d.mes}/${d.ano} salvo no Drive!`, 'success');
   } catch(e) {
     toast('Erro: ' + e.message, 'error');
   } finally {
     btn.disabled = false;
-    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar na Planilha`;
+    btn.innerHTML = `<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="16" height="16"><path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"/><polyline points="17 21 17 13 7 13 7 21"/><polyline points="7 3 7 8 15 8"/></svg>Salvar PDF no Drive`;
   }
 }
 
-// ─────────────────────────────────────────────
-//  HISTÓRICO
-// ─────────────────────────────────────────────
-function salvarHistorico(dados, r) {
+// ═══════════════════════════════════════════════════
+//  HISTÓRICO COMPARTILHADO VIA DRIVE
+// ═══════════════════════════════════════════════════
+async function salvarHistorico(dados, urlPdf) {
+  const entrada = {
+    mes:dados.mes, ano:dados.ano,
+    saldoFinal:dados.saldoFinal,
+    ts:new Date().toISOString(),
+    urlPdf: urlPdf || '',
+    usuario: usuarioAtual
+  };
+  // Local imediato
+  const local = JSON.parse(localStorage.getItem('sadj_hist')||'[]');
+  const idx = local.findIndex(h=>h.mes===dados.mes&&h.ano===dados.ano);
+  if (idx>=0) local[idx]=entrada; else local.unshift(entrada);
+  localStorage.setItem('sadj_hist', JSON.stringify(local.slice(0,36)));
+  renderHistorico();
+  // Drive (assíncrono, não bloqueia)
   try {
-    const hist = JSON.parse(localStorage.getItem('sadj_hist') || '[]');
-    hist.unshift({ mes: dados.mes, ano: dados.ano, saldoFinal: dados.saldoFinal, ts: new Date().toISOString(), urlPlanilha: r.urlPlanilha, urlPdf: r.urlPdf });
-    localStorage.setItem('sadj_hist', JSON.stringify(hist.slice(0, 24)));
-    renderHistorico();
-  } catch(e) {}
+    await chamarScript({ acao:'salvarHistorico', entrada });
+  } catch(e) { /* silencioso */ }
 }
 
 function renderHistorico() {
-  const hist = JSON.parse(localStorage.getItem('sadj_hist') || '[]');
+  const hist = JSON.parse(localStorage.getItem('sadj_hist')||'[]');
   const el = document.getElementById('historico-body');
-  if (!hist.length) { el.textContent = 'Nenhum balancete salvo ainda.'; return; }
-  el.innerHTML = hist.map(h => `
+  if (!hist.length) { el.innerHTML='<div style="color:var(--muted);padding:.5rem 0">Nenhum balancete salvo ainda.</div>'; return; }
+  el.innerHTML = hist.map(h=>`
     <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)">
       <div>
         <div style="font-weight:600;font-size:14px">${h.mes} / ${h.ano}</div>
-        <div style="font-size:11px;color:var(--muted)">${new Date(h.ts).toLocaleString('pt-BR')}</div>
+        <div style="font-size:11px;color:var(--muted)">${new Date(h.ts).toLocaleString('pt-BR')} · por ${h.usuario||'—'}</div>
       </div>
-      <div style="text-align:right">
-        <div style="font-size:14px;font-weight:600;color:var(--navy)">${fmtBRL(h.saldoFinal)}</div>
-        <div style="display:flex;gap:8px;margin-top:4px;justify-content:flex-end">
-          ${h.urlPlanilha ? `<a href="${h.urlPlanilha}" target="_blank" style="font-size:11px;color:var(--navy)">Planilha</a>` : ''}
-          ${h.urlPdf      ? `<a href="${h.urlPdf}"      target="_blank" style="font-size:11px;color:var(--green)">PDF</a>` : ''}
-        </div>
+      <div style="display:flex;align-items:center;gap:12px">
+        <div style="font-size:15px;font-weight:700;color:var(--navy)">${fmtBRL(h.saldoFinal)}</div>
+        ${h.urlPdf?`<a href="${h.urlPdf}" target="_blank" class="btn btn-outline" style="padding:5px 12px;font-size:12px">Ver PDF</a>`:''}
       </div>
     </div>`).join('');
 }
 
-// ─────────────────────────────────────────────
+function confirmarResetHistorico() {
+  abrirModal(
+    'Limpar histórico',
+    'Tem certeza? Isso apagará o histórico local deste navegador. Os PDFs salvos no Drive não serão afetados.',
+    async () => {
+      localStorage.removeItem('sadj_hist');
+      // Limpa também no Drive
+      try { await chamarScript({ acao:'limparHistorico' }); } catch(e){}
+      renderHistorico();
+      toast('Histórico limpo.', 'success');
+    }
+  );
+}
+
+// ═══════════════════════════════════════════════════
 //  PDF
-// ─────────────────────────────────────────────
-function gerarPDF() {
+// ═══════════════════════════════════════════════════
+async function gerarPdfBase64(d) {
+  const { jsPDF } = window.jspdf;
+  const doc = buildPdf(d, new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}));
+  return doc.output('datauristring').split(',')[1];
+}
+
+function gerarPDFDownload() {
   const d = getDados();
   const { jsPDF } = window.jspdf;
-  const doc = buildPdf(d, new jsPDF({ orientation: 'portrait', unit: 'mm', format: 'a4' }));
+  const doc = buildPdf(d, new jsPDF({orientation:'portrait',unit:'mm',format:'a4'}));
   doc.save(`Balancete_SADJ_${d.mes}_${d.ano}.pdf`);
-  toast('PDF gerado!', 'success');
+  toast('PDF baixado!', 'success');
 }
 
 function buildPdf(d, doc) {
-  const brl = v => parseFloat(v || 0).toLocaleString('pt-BR', { style: 'currency', currency: 'BRL' });
-  const fmtDate = s => { if (!s) return '-'; const [y, m, dd] = s.split('-'); return `${dd}/${m}/${y}`; };
-  const navy = [26, 58, 107];
-  const w = doc.internal.pageSize.width;
-  const H = doc.internal.pageSize.height;
+  const brl = v => parseFloat(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
+  const fmtDate = s => { if(!s) return '-'; const[y,m,dd]=s.split('-'); return `${dd}/${m}/${y}`; };
+  const navy=[26,58,107];
+  const w=doc.internal.pageSize.width;
+  const H=doc.internal.pageSize.height;
 
-  // ── Header ──
-  doc.setFillColor(...navy); doc.rect(0, 0, w, 24, 'F');
-  doc.setTextColor(255, 255, 255);
-  doc.setFontSize(7); doc.setFont('helvetica', 'normal');
-  doc.text('Academia de Bombeiro Militar Dom Pedro II', w / 2, 8, { align: 'center' });
-  doc.setFontSize(11); doc.setFont('helvetica', 'bold');
-  doc.text('Diretoria Financeira SADJ — Prestação de Contas', w / 2, 14, { align: 'center' });
-  doc.setFontSize(9);
-  doc.text(`SADJ ${d.mes}/${d.ano}`, w / 2, 21, { align: 'center' });
+  // Header
+  doc.setFillColor(...navy); doc.rect(0,0,w,24,'F');
+  doc.setTextColor(255,255,255);
+  doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('Academia de Bombeiro Militar Dom Pedro II',w/2,8,{align:'center'});
+  doc.setFontSize(11); doc.setFont('helvetica','bold');
+  doc.text('Diretoria Financeira SADJ — Prestação de Contas',w/2,14,{align:'center'});
+  doc.setFontSize(9); doc.text(`SADJ ${d.mes}/${d.ano}`,w/2,21,{align:'center'});
 
-  // ── Saldo boxes ──
-  let y = 28;
-  doc.setTextColor(0, 0, 0);
-  doc.setFillColor(240, 244, 250); doc.rect(10, y, 88, 12, 'F');
-  doc.setFillColor(...navy);       doc.rect(102, y, 98, 12, 'F');
-  doc.setFontSize(7); doc.setTextColor(80, 80, 80); doc.setFont('helvetica', 'normal');
-  doc.text('SALDO INICIAL', 14, y + 4);
-  doc.setFontSize(9); doc.setFont('helvetica', 'bold'); doc.setTextColor(0, 0, 0);
-  doc.text(brl(d.saldoInicial), 14, y + 9);
-  doc.setTextColor(255, 255, 255); doc.setFontSize(7); doc.setFont('helvetica', 'normal');
-  doc.text('SALDO FINAL', 106, y + 4);
-  doc.setFontSize(9); doc.setFont('helvetica', 'bold');
-  doc.text(brl(d.saldoFinal), 106, y + 9);
-  doc.setTextColor(0, 0, 0); y += 16;
+  // Saldo boxes
+  let y=28; doc.setTextColor(0,0,0);
+  doc.setFillColor(240,244,250); doc.rect(10,y,88,12,'F');
+  doc.setFillColor(...navy); doc.rect(102,y,98,12,'F');
+  doc.setFontSize(7); doc.setTextColor(80,80,80); doc.setFont('helvetica','normal');
+  doc.text('SALDO INICIAL',14,y+4);
+  doc.setFontSize(9); doc.setFont('helvetica','bold'); doc.setTextColor(0,0,0);
+  doc.text(brl(d.saldoInicial),14,y+9);
+  doc.setTextColor(255,255,255); doc.setFontSize(7); doc.setFont('helvetica','normal');
+  doc.text('SALDO FINAL',106,y+4);
+  doc.setFontSize(9); doc.setFont('helvetica','bold');
+  doc.text(brl(d.saldoFinal),106,y+9);
+  doc.setTextColor(0,0,0); y+=16;
 
-  // ── CIA table ──
+  // CIA table
   doc.autoTable({
-    startY: y,
-    head: [['Unidade', 'Qtd Cadetes', 'Não Pagantes', 'Valor Tab.', 'Total Arrecadado']],
-    body: [
-      ...d.cias.map(c => [c.nome, c.qtd, c.np, brl(d.mensalidadeTabelada), c.arr > 0 ? brl(c.arr) : '-']),
-      ['TOTAL', d.cias.reduce((s, c) => s + c.qtd, 0), '', '', brl(d.totalMensalidades)]
-    ],
-    headStyles: { fillColor: navy, fontSize: 7, fontStyle: 'bold' },
-    bodyStyles: { fontSize: 8 },
-    columnStyles: { 0: { cellWidth: 28 }, 1: { halign: 'center' }, 2: { halign: 'center' }, 3: { halign: 'right' }, 4: { halign: 'right' } },
-    margin: { left: 10, right: 10 },
-    didParseCell: d2 => {
-      if (d2.row.index === d2.table.body.length - 1 && d2.section === 'body') {
-        d2.cell.styles.fillColor = [220, 230, 240]; d2.cell.styles.fontStyle = 'bold';
-      }
-    }
+    startY:y,
+    head:[['Unidade','Qtd Cadetes','Não Pagantes','Valor Tab.','Total Arrecadado']],
+    body:[...d.cias.map(c=>[c.nome,c.qtd,c.np,brl(d.mensalidadeTabelada),c.arr>0?brl(c.arr):'-']),
+      ['TOTAL',d.cias.reduce((s,c)=>s+c.qtd,0),'','',brl(d.totalMensalidades)]],
+    headStyles:{fillColor:navy,fontSize:7,fontStyle:'bold'},bodyStyles:{fontSize:8},
+    columnStyles:{0:{cellWidth:28},1:{halign:'center'},2:{halign:'center'},3:{halign:'right'},4:{halign:'right'}},
+    margin:{left:10,right:10},
+    didParseCell:d2=>{if(d2.row.index===d2.table.body.length-1&&d2.section==='body'){d2.cell.styles.fillColor=[220,230,240];d2.cell.styles.fontStyle='bold';}}
   });
-  y = doc.lastAutoTable.finalY + 5;
+  y=doc.lastAutoTable.finalY+5;
 
-  // ── Despesas ──
-  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...navy);
-  doc.text('DESPESAS', 10, y); doc.setTextColor(0, 0, 0); y += 2;
-
-  // Monta corpo com links clicáveis para comprovantes
-  const despFiltered = d.despesas.filter(i => i.desc || i.valor);
-  const despBody = despFiltered.map((it, i) => [i + 1, fmtDate(it.data), brl(it.valor), it.desc, it.comp]);
-  despBody.push(['', 'Despesa Total', brl(d.totalDespesas), '', '']);
-
-  doc.autoTable({
-    startY: y,
-    head: [['#', 'Data', 'Valor', 'Descrição', 'Comprovante']],
-    body: despBody,
-    headStyles: { fillColor: navy, fontSize: 7, fontStyle: 'bold' },
-    bodyStyles: { fontSize: 8 },
-    columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 1: { cellWidth: 22 }, 2: { cellWidth: 26, halign: 'right' }, 4: { cellWidth: 32 } },
-    margin: { left: 10, right: 10 },
-    didDrawCell: (data) => {
-      // Coluna 4 = Comprovante → adiciona link clicável se tiver URL
-      if (data.section === 'body' && data.column.index === 4 && data.row.index < despFiltered.length) {
-        const it = despFiltered[data.row.index];
-        if (it.url) {
-          doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, { url: it.url });
-          doc.setTextColor(26, 58, 107);
-          doc.setFontSize(7);
-          doc.text(it.comp || '', data.cell.x + 1, data.cell.y + data.cell.height / 2 + 2);
-          doc.setTextColor(0, 0, 0);
+  // Helper para tabelas com links
+  function tabelaItens(titulo, itens, total) {
+    doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...navy);
+    doc.text(titulo,10,y); doc.setTextColor(0,0,0); y+=2;
+    const filtrados = itens.filter(i=>i.desc||i.valor);
+    const body = filtrados.map((it,i)=>[i+1,fmtDate(it.data),brl(it.valor),it.desc,it.url?it.comp:it.comp]);
+    body.push(['','Total',brl(total),'','']);
+    doc.autoTable({
+      startY:y,
+      head:[['#','Data','Valor','Descrição','Comprovante']],
+      body,
+      headStyles:{fillColor:navy,fontSize:7,fontStyle:'bold'},
+      bodyStyles:{fontSize:8},
+      columnStyles:{0:{cellWidth:10,halign:'center'},1:{cellWidth:22},2:{cellWidth:26,halign:'right'},4:{cellWidth:32}},
+      margin:{left:10,right:10},
+      // Comprovante como link clicável (o código É o link)
+      didDrawCell:(data)=>{
+        if(data.section==='body' && data.column.index===4 && data.row.index<filtrados.length) {
+          const it = filtrados[data.row.index];
+          if(it.url) {
+            // Apaga o texto padrão e redesenha em azul como hiperlink
+            doc.setFillColor(255,255,255);
+            doc.rect(data.cell.x+0.2, data.cell.y+0.2, data.cell.width-0.4, data.cell.height-0.4,'F');
+            doc.setFontSize(7); doc.setTextColor(26,58,107);
+            doc.setFont('helvetica','normal');
+            doc.text(it.comp||'Ver', data.cell.x+1, data.cell.y+data.cell.height/2+2);
+            // Adiciona o link clicável cobrindo toda a célula
+            doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, {url:it.url});
+            doc.setTextColor(0,0,0);
+          }
         }
+      },
+      didParseCell:d2=>{
+        if(d2.row.index===body.length-1&&d2.section==='body'){d2.cell.styles.fillColor=[220,230,240];d2.cell.styles.fontStyle='bold';}
       }
-    },
-    didParseCell: d2 => {
-      if (d2.row.index === despBody.length - 1 && d2.section === 'body') {
-        d2.cell.styles.fillColor = [220, 230, 240]; d2.cell.styles.fontStyle = 'bold';
-      }
-    }
-  });
-  y = doc.lastAutoTable.finalY + 5;
-
-  // ── Receitas ──
-  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...navy);
-  doc.text('RECEITAS', 10, y); doc.setTextColor(0, 0, 0); y += 2;
-
-  const recFiltered = d.receitas.filter(i => i.desc || i.valor);
-  const recBody = recFiltered.map((it, i) => [i + 1, fmtDate(it.data), brl(it.valor), it.desc, it.comp]);
-  recBody.push(['', 'Receita Total', brl(d.totalReceitas), '', '']);
-
-  doc.autoTable({
-    startY: y,
-    head: [['#', 'Data', 'Valor', 'Descrição', 'Comprovante']],
-    body: recBody,
-    headStyles: { fillColor: navy, fontSize: 7, fontStyle: 'bold' },
-    bodyStyles: { fontSize: 8 },
-    columnStyles: { 0: { cellWidth: 10, halign: 'center' }, 1: { cellWidth: 22 }, 2: { cellWidth: 26, halign: 'right' }, 4: { cellWidth: 32 } },
-    margin: { left: 10, right: 10 },
-    didDrawCell: (data) => {
-      if (data.section === 'body' && data.column.index === 4 && data.row.index < recFiltered.length) {
-        const it = recFiltered[data.row.index];
-        if (it.url) {
-          doc.link(data.cell.x, data.cell.y, data.cell.width, data.cell.height, { url: it.url });
-          doc.setTextColor(26, 58, 107);
-          doc.setFontSize(7);
-          doc.text(it.comp || '', data.cell.x + 1, data.cell.y + data.cell.height / 2 + 2);
-          doc.setTextColor(0, 0, 0);
-        }
-      }
-    },
-    didParseCell: d2 => {
-      if (d2.row.index === recBody.length - 1 && d2.section === 'body') {
-        d2.cell.styles.fillColor = [220, 230, 240]; d2.cell.styles.fontStyle = 'bold';
-      }
-    }
-  });
-  y = doc.lastAutoTable.finalY + 5;
-
-  // ── Observações dinâmicas ──
-  if (d.observacoes && d.observacoes.length) {
-    doc.setFontSize(7.5); doc.setFont('helvetica', 'normal'); doc.setTextColor(60, 60, 60);
-    d.observacoes.forEach(ob => {
-      doc.text(`${ob.marcador} ${ob.texto}`, 10, y);
-      y += 4;
     });
-    y += 2;
+    y=doc.lastAutoTable.finalY+5;
   }
 
-  // ── Resumo ──
-  // Verifica se cabe na página, senão nova página
-  if (y + 44 > H - 30) { doc.addPage(); y = 15; }
+  tabelaItens('DESPESAS', d.despesas, d.totalDespesas);
+  tabelaItens('RECEITAS', d.receitas, d.totalReceitas);
 
-  doc.setFillColor(240, 244, 250); doc.rect(10, y, 188, 38, 'F');
-  doc.setFontSize(8); doc.setFont('helvetica', 'bold'); doc.setTextColor(...navy);
-  doc.text('RESUMO DO MÊS', 14, y + 5);
-  doc.setFont('helvetica', 'normal'); doc.setTextColor(0, 0, 0); doc.setFontSize(8);
-  [
-    ['Saldo Anterior',      brl(d.saldoInicial)],
-    ['Total Mensalidades',  brl(d.totalMensalidades)],
-    ['Despesas',            brl(d.totalDespesas)],
-    ['Receitas',            brl(d.totalReceitas)]
-  ].forEach((r, i) => {
-    doc.text(r[0], 14, y + 11 + i * 5);
-    doc.text(r[1], 120, y + 11 + i * 5, { align: 'right' });
-  });
-  doc.setFont('helvetica', 'bold'); doc.setFontSize(10); doc.setTextColor(...navy);
-  doc.text('SALDO FINAL', 14, y + 34);
-  doc.text(brl(d.saldoFinal), 120, y + 34, { align: 'right' });
-  y += 44;
+  // Observações
+  if(d.observacoes&&d.observacoes.length){
+    doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
+    d.observacoes.forEach(ob=>{ doc.text(`${ob.marcador} ${ob.texto}`,10,y); y+=4; });
+    y+=2;
+  }
 
-  // ── Assinaturas ──
-  if (y + 16 > H - 10) { doc.addPage(); y = 15; }
-  const sigs = [
-    ['Presidente da SADJ', d.presidente],
-    ['Tesoureira da SADJ',  d.tesoureira],
-    ['Fiscal 2ª CIA',       'CAD BM 2449 ALVES'],
-    ['Fiscal 3ª CIA',       'CAD BM 2499 G. SOUZA']
-  ];
-  const sw = 188 / 4;
-  doc.setFont('helvetica', 'normal'); doc.setFontSize(7); doc.setTextColor(0, 0, 0);
-  sigs.forEach((s, i) => {
-    const x = 10 + sw * i + sw / 2;
-    doc.line(x - 15, y, x + 15, y);
-    doc.text(s[0], x, y + 4, { align: 'center' });
-    doc.text(s[1], x, y + 8, { align: 'center' });
-  });
+  // Resumo
+  if(y+44>H-30){doc.addPage();y=15;}
+  doc.setFillColor(240,244,250); doc.rect(10,y,188,38,'F');
+  doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...navy);
+  doc.text('RESUMO DO MÊS',14,y+5);
+  doc.setFont('helvetica','normal'); doc.setTextColor(0,0,0); doc.setFontSize(8);
+  [['Saldo Anterior',brl(d.saldoInicial)],['Total Mensalidades',brl(d.totalMensalidades)],['Despesas',brl(d.totalDespesas)],['Receitas',brl(d.totalReceitas)]]
+    .forEach((r,i)=>{ doc.text(r[0],14,y+11+i*5); doc.text(r[1],120,y+11+i*5,{align:'right'}); });
+  doc.setFont('helvetica','bold'); doc.setFontSize(10); doc.setTextColor(...navy);
+  doc.text('SALDO FINAL',14,y+34); doc.text(brl(d.saldoFinal),120,y+34,{align:'right'});
+  y+=44;
 
-  // ── Rodapé ──
-  doc.setFontSize(6); doc.setTextColor(150, 150, 150);
-  doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')}`, w / 2, H - 5, { align: 'center' });
+  // Assinaturas
+  if(y+16>H-10){doc.addPage();y=15;}
+  const sigs=[['Presidente da SADJ',d.presidente],['Tesoureira da SADJ',d.tesoureira],['Fiscal 2ª CIA','CAD BM 2449 ALVES'],['Fiscal 3ª CIA','CAD BM 2499 G. SOUZA']];
+  const sw=188/4;
+  doc.setFont('helvetica','normal'); doc.setFontSize(7); doc.setTextColor(0,0,0);
+  sigs.forEach((s,i)=>{ const x=10+sw*i+sw/2; doc.line(x-15,y,x+15,y); doc.text(s[0],x,y+4,{align:'center'}); doc.text(s[1],x,y+8,{align:'center'}); });
 
+  doc.setFontSize(6); doc.setTextColor(150,150,150);
+  doc.text(`Gerado em ${new Date().toLocaleString('pt-BR')} por ${usuarioAtual||'—'}`,w/2,H-5,{align:'center'});
   return doc;
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  PRÉ-VISUALIZAÇÃO
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 function renderPreview() {
-  const d = getDados();
-  const fmtDate = s => { if (!s) return '-'; const [y, m, dd] = s.split('-'); return `${dd}/${m}/${y}`; };
-
-  const ciasHtml = d.cias.map(c =>
-    `<tr><td>${c.nome}</td><td style="text-align:center">${c.qtd}</td><td style="text-align:center">${c.np}</td><td style="text-align:right">${fmtBRL(d.mensalidadeTabelada)}</td><td style="text-align:right">${c.arr > 0 ? fmtBRL(c.arr) : '-'}</td></tr>`
-  ).join('');
-
-  const despHtml = d.despesas.filter(i => i.desc || i.valor).map((it, i) =>
-    `<tr><td>${i+1}</td><td>${fmtDate(it.data)}</td><td style="text-align:right">${fmtBRL(it.valor)}</td><td>${it.desc}</td>
-     <td>${it.url ? `<a href="${it.url}" target="_blank" style="color:var(--navy);font-weight:600">${it.comp} ↗</a>` : it.comp}</td></tr>`
-  ).join('');
-
-  const recHtml = d.receitas.filter(i => i.desc || i.valor).map((it, i) =>
-    `<tr><td>${i+1}</td><td>${fmtDate(it.data)}</td><td style="text-align:right">${fmtBRL(it.valor)}</td><td>${it.desc}</td>
-     <td>${it.url ? `<a href="${it.url}" target="_blank" style="color:var(--navy);font-weight:600">${it.comp} ↗</a>` : it.comp}</td></tr>`
-  ).join('');
-
-  const obsHtml = d.observacoes.length
-    ? d.observacoes.map(o => `<div>${o.marcador} ${o.texto}</div>`).join('')
-    : '';
-
-  document.getElementById('preview-body').innerHTML = `
+  const d=getDados();
+  const fmtDate=s=>{if(!s)return'-';const[y,m,dd]=s.split('-');return`${dd}/${m}/${y}`;};
+  const ciasHtml=d.cias.map(c=>`<tr><td>${c.nome}</td><td style="text-align:center">${c.qtd}</td><td style="text-align:center">${c.np}</td><td style="text-align:right">${fmtBRL(d.mensalidadeTabelada)}</td><td style="text-align:right">${c.arr>0?fmtBRL(c.arr):'-'}</td></tr>`).join('');
+  const linhaItem=(it,i)=>`<tr><td>${i+1}</td><td>${fmtDate(it.data)}</td><td style="text-align:right">${fmtBRL(it.valor)}</td><td>${it.desc}</td><td>${it.url?`<a href="${it.url}" target="_blank">${it.comp}</a>`:it.comp}</td></tr>`;
+  const despHtml=d.despesas.filter(i=>i.desc||i.valor).map(linhaItem).join('');
+  const recHtml=d.receitas.filter(i=>i.desc||i.valor).map(linhaItem).join('');
+  const obsHtml=d.observacoes.map(o=>`<div>${o.marcador} ${o.texto}</div>`).join('');
+  document.getElementById('preview-body').innerHTML=`
     <div style="text-align:center;padding:1rem 0 1.5rem;border-bottom:1px solid var(--border);margin-bottom:1rem">
       <div style="font-size:12px;color:var(--muted)">Academia de Bombeiro Militar Dom Pedro II</div>
       <div style="font-size:16px;font-weight:700;color:var(--navy)">Diretoria Financeira SADJ — Prestação de Contas</div>
@@ -1070,23 +997,22 @@ function renderPreview() {
     <p style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:6px">Mensalidades</p>
     <table class="preview-table" style="margin-bottom:1.5rem">
       <thead><tr><th>Unidade</th><th>Qtd</th><th>Não pag.</th><th>Val. tab.</th><th>Arrecadado</th></tr></thead>
-      <tbody>${ciasHtml}
-      <tr class="total-row"><td><b>TOTAL</b></td><td style="text-align:center"><b>${d.cias.reduce((s,c)=>s+c.qtd,0)}</b></td><td></td><td></td><td style="text-align:right"><b>${fmtBRL(d.totalMensalidades)}</b></td></tr></tbody>
+      <tbody>${ciasHtml}<tr class="total-row"><td><b>TOTAL</b></td><td style="text-align:center"><b>${d.cias.reduce((s,c)=>s+c.qtd,0)}</b></td><td></td><td></td><td style="text-align:right"><b>${fmtBRL(d.totalMensalidades)}</b></td></tr></tbody>
     </table>
     <p style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:6px">Despesas</p>
     <table class="preview-table" style="margin-bottom:1.5rem">
       <thead><tr><th>#</th><th>Data</th><th>Valor</th><th>Descrição</th><th>Comprovante</th></tr></thead>
-      <tbody>${despHtml || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:12px">Nenhuma despesa lançada</td></tr>'}
+      <tbody>${despHtml||'<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:12px">Nenhuma despesa</td></tr>'}
       <tr class="total-row"><td colspan="2"><b>Despesa Total</b></td><td style="text-align:right"><b>${fmtBRL(d.totalDespesas)}</b></td><td colspan="2"></td></tr></tbody>
     </table>
     <p style="font-weight:700;font-size:11px;text-transform:uppercase;letter-spacing:.5px;color:var(--navy);margin-bottom:6px">Receitas</p>
     <table class="preview-table" style="margin-bottom:1.5rem">
       <thead><tr><th>#</th><th>Data</th><th>Valor</th><th>Descrição</th><th>Comprovante</th></tr></thead>
-      <tbody>${recHtml || '<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:12px">Nenhuma receita lançada</td></tr>'}
+      <tbody>${recHtml||'<tr><td colspan="5" style="color:var(--muted);text-align:center;padding:12px">Nenhuma receita</td></tr>'}
       <tr class="total-row"><td colspan="2"><b>Receita Total</b></td><td style="text-align:right"><b>${fmtBRL(d.totalReceitas)}</b></td><td colspan="2"></td></tr></tbody>
     </table>
-    ${obsHtml ? `<div style="font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;margin-bottom:1rem;line-height:1.8">${obsHtml}</div>` : ''}
-    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center;font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:1rem;margin-top:.5rem">
+    ${obsHtml?`<div style="font-size:12px;color:var(--muted);border:1px solid var(--border);border-radius:var(--radius-sm);padding:.75rem;margin-bottom:1rem;line-height:1.8">${obsHtml}</div>`:''}
+    <div style="display:grid;grid-template-columns:1fr 1fr 1fr 1fr;gap:8px;text-align:center;font-size:11px;color:var(--muted);border-top:1px solid var(--border);padding-top:1rem">
       <div>_______________<br><b>Presidente SADJ</b><br>${d.presidente}</div>
       <div>_______________<br><b>Tesoureira SADJ</b><br>${d.tesoureira}</div>
       <div>_______________<br><b>Fiscal 2ª CIA</b><br>CAD BM 2449 ALVES</div>
@@ -1094,40 +1020,52 @@ function renderPreview() {
     </div>`;
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
+//  MODAL
+// ═══════════════════════════════════════════════════
+function abrirModal(titulo, msg, onConfirm) {
+  document.getElementById('modal-title').textContent = titulo;
+  document.getElementById('modal-msg').textContent   = msg;
+  document.getElementById('modal-confirm-btn').onclick = () => { fecharModal(); onConfirm(); };
+  document.getElementById('modal-overlay').classList.remove('hidden');
+}
+function fecharModal() { document.getElementById('modal-overlay').classList.add('hidden'); }
+
+// ═══════════════════════════════════════════════════
 //  NAVEGAÇÃO
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 function showPage(name) {
-  document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
-  document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
-  document.getElementById('page-' + name).classList.add('active');
-  const idx = { lancamento: 0, preview: 1, historico: 2, config: 3 };
+  document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
+  document.getElementById('page-'+name).classList.add('active');
+  const idx={lancamento:0,preview:1,historico:2,config:3};
   document.querySelectorAll('.nav-item')[idx[name]]?.classList.add('active');
-  if (name === 'preview')   renderPreview();
-  if (name === 'historico') renderHistorico();
+  if(name==='preview') renderPreview();
+  if(name==='historico') renderHistorico();
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  TOAST
-// ─────────────────────────────────────────────
-function toast(msg, type = 'info') {
-  const icons = { success: '✓', error: '✗', info: 'ℹ' };
-  const el = document.createElement('div');
-  el.className = `toast ${type}`;
-  el.innerHTML = `<span class="toast-icon">${icons[type]}</span><span>${msg}</span>`;
+// ═══════════════════════════════════════════════════
+function toast(msg, type='info') {
+  const icons={success:'✓',error:'✗',info:'ℹ'};
+  const el=document.createElement('div');
+  el.className=`toast ${type}`;
+  el.innerHTML=`<span class="toast-icon">${icons[type]}</span><span>${msg}</span>`;
   document.getElementById('toast-container').appendChild(el);
-  setTimeout(() => el.remove(), 5000);
+  setTimeout(()=>el.remove(),5000);
 }
 
-// ─────────────────────────────────────────────
+// ═══════════════════════════════════════════════════
 //  INIT
-// ─────────────────────────────────────────────
-renderItems('despesas');
-renderItems('receitas');
-renderObs();
-updateCalc();
-carregarConfig();
-renderHistorico();
+// ═══════════════════════════════════════════════════
+function iniciarApp() {
+  renderItems('despesas');
+  renderItems('receitas');
+  renderObs();
+  updateCalc();
+  carregarConfig().then(()=>renderHistorico());
+}
 </script>
 </body>
 </html>
