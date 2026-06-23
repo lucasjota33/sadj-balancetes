@@ -67,17 +67,23 @@ function uploadComprovante(dados) {
 
   const blob = Utilities.newBlob(Utilities.base64Decode(dados.base64), dados.mimeType, dados.nomeArquivo);
   const arquivo = pastaTipo.createFile(blob);
-
-  // Qualquer pessoa com o link pode visualizar
-  arquivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
   const fileId = arquivo.getId();
+  let sharingOk = true;
+
+  try {
+    // Qualquer pessoa com o link pode visualizar
+    arquivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (shareErr) {
+    sharingOk = false;
+    Logger.log('Falha ao ajustar compartilhamento do comprovante: ' + shareErr.message);
+  }
 
   return {
     sucesso: true,
     fileId: fileId,
     url: arquivo.getUrl(),
-    // /view abre no Google Drive Viewer no navegador (funciona para PDF, imagem, etc.)
     urlPreview: "https://drive.google.com/file/d/" + fileId + "/view",
+    compartilhamento: sharingOk ? 'ok' : 'erro',
     // Para imagens: renderiza diretamente sem precisar do Viewer
     urlDirect: "https://drive.google.com/uc?export=view&id=" + fileId,
     nome: arquivo.getName()
@@ -141,8 +147,17 @@ function salvarPdfNoDrive(dados) {
   const pastaMes = obterPastaMes(dados.mes, dados.ano);
   const blob = Utilities.newBlob(Utilities.base64Decode(dados.pdfBase64), "application/pdf", "Balancete_SADJ_" + dados.mes + "_" + dados.ano + ".pdf");
   const arquivo = pastaMes.createFile(blob);
-  arquivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
-  return arquivo.getUrl();
+  let sharingOk = true;
+
+  try {
+    arquivo.setSharing(DriveApp.Access.ANYONE_WITH_LINK, DriveApp.Permission.VIEW);
+  } catch (shareErr) {
+    sharingOk = false;
+    Logger.log('Falha ao ajustar compartilhamento do PDF: ' + shareErr.message);
+  }
+
+  const url = arquivo.getUrl();
+  return { url: url, compartilhamento: sharingOk ? 'ok' : 'erro' };
 }
 
 function listarPastas() {
