@@ -17,8 +17,6 @@ function doPost(e) {
       resultado = uploadComprovante(dados);
     } else if (dados.acao === "salvarBalancete") {
       resultado = salvarBalancete(dados);
-    } else if (dados.acao === "listarPastas") {
-      resultado = listarPastas();
     } else {
       resultado = { erro: "Ação desconhecida" };
     }

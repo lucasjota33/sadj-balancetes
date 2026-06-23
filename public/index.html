@@ -202,8 +202,8 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
   </div>
   <div class="topbar-right">
     <div class="topbar-status">
-      <div class="status-dot off" id="drive-dot"></div>
-      <span id="drive-label">Drive não configurado</span>
+      <div class="status-dot" id="drive-dot"></div>
+      <span id="drive-label">Drive conectado</span>
     </div>
     <div class="user-badge">
       <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="8" r="4"/><path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/></svg>
@@ -228,10 +228,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
       <div class="nav-item" onclick="showPage('historico')">
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
         Histórico
-      </div>
-      <div class="nav-item" onclick="showPage('config')">
-        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.07 4.93A10 10 0 1 1 4.93 19.07"/></svg>
-        Configurações
       </div>
     </div>
   </aside>
@@ -369,51 +365,6 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
       </div>
     </div>
 
-    <!-- CONFIGURAÇÕES -->
-    <div class="page" id="page-config">
-      <div class="card">
-        <div class="card-title">
-          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polygon points="12 2 2 19 22 19"/></svg>
-          Google Drive — Armazenamento
-        </div>
-        <div class="info-box">
-          Os comprovantes e PDFs são salvos no Drive em uma conta que você determina via Apps Script.
-          Os dados de configuração ficam <b>sincronizados entre todos os computadores</b> — qualquer usuário logado que salvar aqui atualiza para todos.
-        </div>
-        <div class="row col-2">
-          <div>
-            <label>URL do Apps Script (Web App)</label>
-            <input type="text" id="cfg-script-url" value="https://script.google.com/macros/s/AKfycbxElmtR5UwSO_aMRIH7bl5GA-gLbBEpicB1gWRhFLQ36n8NIT4JH8vmwqQUd_Rd8dK0/exec" readonly>
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">URL embutida no código; não é necessário alterar.</div>
-          </div>
-          <div>
-            <label>ID da pasta raiz no Drive</label>
-            <input type="text" id="cfg-pasta-id" value="1AB0fgS-BI9Qdb6J0EN3TzjYGmTBhs7Ir" readonly>
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">ID embutido no código; não é necessário alterar.</div>
-          </div>
-        </div>
-        <div style="display:flex;gap:10px;margin-top:.5rem">
-          <button class="btn btn-primary" onclick="salvarConfigNoDrive()">Salvar configurações no Drive</button>
-          <button class="btn btn-outline" onclick="testarDrive()">Testar conexão</button>
-        </div>
-        <div id="drive-status" class="config-status" style="display:none;margin-top:.75rem"></div>
-        <div style="margin-top:.75rem;font-size:12px;color:var(--muted);background:var(--surface);border-radius:var(--radius-sm);padding:.6rem .8rem;border:1px solid var(--border)">
-          💡 Após clicar em <b>Salvar configurações no Drive</b>, todos os usuários que acessarem o sistema de qualquer computador carregarão automaticamente a mesma URL e ID.
-        </div>
-      </div>
-
-      <div class="card">
-        <div class="card-title">Guia de Configuração — Passo a Passo</div>
-        <div style="font-size:13px;line-height:1.9;color:var(--text);display:flex;flex-direction:column;gap:.75rem">
-          <div style="display:flex;gap:10px"><span class="step-badge">1</span><div>Acesse <a href="https://script.google.com" target="_blank" style="color:var(--navy);font-weight:600">script.google.com</a> → Novo projeto → cole o conteúdo do <code>Code.gs</code></div></div>
-          <div style="display:flex;gap:10px"><span class="step-badge">2</span><div>O URL do Apps Script e o ID da pasta raiz já estão embutidos no código.</div></div>
-          <div style="display:flex;gap:10px"><span class="step-badge">3</span><div><b>Implantar → Nova implantação → App da Web</b> → Executar como: <em>Eu</em> · Acesso: <em>Qualquer pessoa</em> → Implantar → copie a URL</div></div>
-          <div style="display:flex;gap:10px"><span class="step-badge">4</span><div>Não é necessário colar a URL ou o ID manualmente.</div></div>
-          <div style="display:flex;gap:10px"><span class="step-badge">5</span><div>✓ Pronto! Os PDFs serão salvos em <code>PASTA_RAIZ/BALANCETES_SISTEMA/</code> e os comprovantes em <code>PASTA_RAIZ/MES_ANO/COMPROVANTES/</code></div></div>
-        </div>
-      </div>
-    </div>
-
   </main>
 </div><!-- /layout -->
 </div><!-- /app -->
@@ -486,7 +437,7 @@ let despesas   = [emptyItem()];
 let receitas   = [emptyItem()];
 let observacoes = [{ texto: 'Valor a ser restituído à SADJ - R$ 0,00' }];
 let uploadingItem = null;
-let cfg = {
+const cfg = {
   scriptUrl: 'https://script.google.com/macros/s/AKfycbxElmtR5UwSO_aMRIH7bl5GA-gLbBEpicB1gWRhFLQ36n8NIT4JH8vmwqQUd_Rd8dK0/exec',
   pastaId: '1AB0fgS-BI9Qdb6J0EN3TzjYGmTBhs7Ir'
 };
@@ -495,88 +446,7 @@ function emptyItem() {
   return { data:'', valor:'', desc:'', comp:'', url:'' };
 }
 
-// ═══════════════════════════════════════════════════
-//  CONFIG — LOCAL + DRIVE (compartilhado)
-// ═══════════════════════════════════════════════════
-function salvarConfigLocal() {
-  cfg.scriptUrl = document.getElementById('cfg-script-url').value.trim();
-  cfg.pastaId   = document.getElementById('cfg-pasta-id').value.trim();
-  localStorage.setItem('sadj_cfg', JSON.stringify(cfg));
-  atualizarStatusDrive();
-}
-
-async function salvarConfigNoDrive() {
-  salvarConfigLocal();
-  if (!cfg.scriptUrl) { toast('Configure a URL do Apps Script primeiro.', 'error'); return; }
-  try {
-    const r = await chamarScript({ acao: 'salvarConfig', cfg });
-    if (r.erro) throw new Error(r.erro);
-    toast('✓ Configurações salvas no Drive e sincronizadas!', 'success');
-    atualizarStatusDrive();
-  } catch(e) {
-    toast('Erro ao salvar no Drive: ' + e.message, 'error');
-  }
-}
-
-async function carregarConfig() {
-  // 1. Carrega local primeiro (rápido)
-  try {
-    const s = localStorage.getItem('sadj_cfg');
-    if (s) {
-      const saved = JSON.parse(s);
-      cfg = {
-        scriptUrl: saved.scriptUrl && saved.scriptUrl.trim() ? saved.scriptUrl.trim() : cfg.scriptUrl,
-        pastaId:   saved.pastaId   && saved.pastaId.trim()   ? saved.pastaId.trim()   : cfg.pastaId
-      };
-    }
-    if (cfg.scriptUrl) document.getElementById('cfg-script-url').value = cfg.scriptUrl;
-    if (cfg.pastaId)   document.getElementById('cfg-pasta-id').value   = cfg.pastaId;
-  } catch(e) {}
-
-  // 2. Tenta buscar do Drive (fonte da verdade compartilhada)
-  if (cfg.scriptUrl) {
-    try {
-      const r = await chamarScript({ acao: 'carregarConfig' });
-      if (r.cfg && r.cfg.scriptUrl) {
-        cfg = { ...cfg, ...r.cfg };
-        document.getElementById('cfg-script-url').value = cfg.scriptUrl;
-        document.getElementById('cfg-pasta-id').value   = cfg.pastaId || '';
-        localStorage.setItem('sadj_cfg', JSON.stringify(cfg));
-      }
-      // Carrega histórico compartilhado
-      if (r.historico) {
-        localStorage.setItem('sadj_hist', JSON.stringify(r.historico));
-        renderHistorico();
-      }
-    } catch(e) { /* silencioso */ }
-  }
-  atualizarStatusDrive();
-}
-
-function atualizarStatusDrive() {
-  const ok = !!cfg.scriptUrl;
-  document.getElementById('drive-dot').className = 'status-dot' + (ok ? '' : ' off');
-  document.getElementById('drive-label').textContent = ok ? 'Drive conectado' : 'Drive não configurado';
-}
-
-async function testarDrive() {
-  const el = document.getElementById('drive-status');
-  el.style.display = 'flex'; el.className = 'config-status';
-  el.textContent = 'Testando…';
-  try {
-    const r = await chamarScript({ acao: 'listarPastas' });
-    if (r.erro) throw new Error(r.erro);
-    el.className = 'config-status ok';
-    el.innerHTML = '✓ Drive conectado! Pastas: ' + (r.pastas||[]).map(p=>p.nome).join(', ');
-    atualizarStatusDrive();
-  } catch(e) {
-    el.className = 'config-status erro';
-    el.innerHTML = '✗ ' + e.message;
-  }
-}
-
 async function chamarScript(dados) {
-  if (!cfg.scriptUrl) throw new Error('URL do Apps Script não configurada.');
   const resp = await fetch(cfg.scriptUrl, {
     method: 'POST',
     headers: { 'Content-Type': 'text/plain' },
@@ -615,7 +485,7 @@ async function handleFileSelected(e) {
   if (!cfg.scriptUrl) {
     item._uploading = false;
     renderItems(type);
-    toast('Drive não configurado. Vá em Configurações.', 'error');
+    toast('Erro de configuração do Drive.', 'error');
     return;
   }
 
@@ -628,8 +498,7 @@ async function handleFileSelected(e) {
       acao: 'uploadComprovante',
       mes, ano,
       tipo: type === 'despesas' ? 'despesa' : 'receita',
-      nomeArquivo, mimeType: file.type, base64,
-      pastaId: cfg.pastaId || ''
+      nomeArquivo, mimeType: file.type, base64
     });
     if (r.erro) throw new Error(r.erro);
     item.url = r.urlPreview || r.url;
@@ -764,7 +633,7 @@ function getDados() {
 //  SALVAR PDF NO DRIVE (pasta BALANCETES_SISTEMA)
 // ═══════════════════════════════════════════════════
 async function salvarBalancete() {
-  if (!cfg.scriptUrl) { toast('Configure o Drive em Configurações.', 'error'); showPage('config'); return; }
+  if (!cfg.scriptUrl) { toast('Erro de configuração do Drive.', 'error'); return; }
   const btn = document.getElementById('btn-salvar');
   btn.disabled = true;
   btn.innerHTML = '<span style="opacity:.6;font-size:12px">Salvando…</span>';
@@ -772,9 +641,8 @@ async function salvarBalancete() {
     const d = getDados();
     const pdfBase64 = await gerarPdfBase64(d);
     const r = await chamarScript({
-      acao: 'salvarPdfBalancete',
+      acao: 'salvarBalancete',
       mes: d.mes, ano: d.ano,
-      pastaId: cfg.pastaId || '',
       pdfBase64
     });
     if (r.erro) throw new Error(r.erro);
@@ -806,10 +674,6 @@ async function salvarHistorico(dados, urlPdf) {
   if (idx>=0) local[idx]=entrada; else local.unshift(entrada);
   localStorage.setItem('sadj_hist', JSON.stringify(local.slice(0,36)));
   renderHistorico();
-  // Drive (assíncrono, não bloqueia)
-  try {
-    await chamarScript({ acao:'salvarHistorico', entrada });
-  } catch(e) { /* silencioso */ }
 }
 
 function renderHistorico() {
@@ -835,8 +699,6 @@ function confirmarResetHistorico() {
     'Tem certeza? Isso apagará o histórico local deste navegador. Os PDFs salvos no Drive não serão afetados.',
     async () => {
       localStorage.removeItem('sadj_hist');
-      // Limpa também no Drive
-      try { await chamarScript({ acao:'limparHistorico' }); } catch(e){}
       renderHistorico();
       toast('Histórico limpo.', 'success');
     }
@@ -1047,7 +909,7 @@ function showPage(name) {
   document.querySelectorAll('.page').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-item').forEach(n=>n.classList.remove('active'));
   document.getElementById('page-'+name).classList.add('active');
-  const idx={lancamento:0,preview:1,historico:2,config:3};
+  const idx={lancamento:0,preview:1,historico:2};
   document.querySelectorAll('.nav-item')[idx[name]]?.classList.add('active');
   if(name==='preview') renderPreview();
   if(name==='historico') renderHistorico();
@@ -1073,7 +935,7 @@ function iniciarApp() {
   renderItems('receitas');
   renderObs();
   updateCalc();
-  carregarConfig().then(()=>renderHistorico());
+  renderHistorico();
 }
 </script>
 </body>
