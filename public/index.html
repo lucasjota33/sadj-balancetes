@@ -438,7 +438,7 @@ let receitas   = [emptyItem()];
 let observacoes = [{ texto: 'Valor a ser restituído à SADJ - R$ 0,00' }];
 let uploadingItem = null;
 const cfg = {
-  scriptUrl: 'https://script.google.com/macros/s/AKfycbxElmtR5UwSO_aMRIH7bl5GA-gLbBEpicB1gWRhFLQ36n8NIT4JH8vmwqQUd_Rd8dK0/exec',
+  scriptUrl: 'https://script.google.com/macros/s/AKfycbwk2jeszZG5f8h3ml_SToVMCHvXq-SAt8LTqoVYd7gaV9DAEmdbFyH8HC7IXuvnXY5d/exec',
   pastaId: '1AB0fgS-BI9Qdb6J0EN3TzjYGmTBhs7Ir'
 };
 
@@ -449,11 +449,34 @@ function emptyItem() {
 async function chamarScript(dados) {
   const resp = await fetch(cfg.scriptUrl, {
     method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(dados)
+    body: JSON.stringify(dados),
+    mode: 'cors'
   });
-  if (!resp.ok) throw new Error('HTTP ' + resp.status);
+  if (!resp.ok) {
+    let msg = 'HTTP ' + resp.status;
+    try {
+      const json = await resp.json();
+      if (json && json.erro) msg = json.erro;
+    } catch (ignore) {}
+    throw new Error(msg);
+  }
   return await resp.json();
+}
+
+async function verificarScript() {
+  try {
+    const resp = await fetch(cfg.scriptUrl, { method: 'GET', mode: 'cors' });
+    const ativo = resp.ok;
+    document.getElementById('drive-dot').classList.toggle('off', !ativo);
+    document.getElementById('drive-label').textContent = ativo ? 'Drive conectado' : 'Drive desconectado';
+    if (!ativo) {
+      toast('Não foi possível conectar ao Apps Script. Verifique a implantação e o scriptUrl.', 'error');
+    }
+  } catch (err) {
+    document.getElementById('drive-dot').classList.add('off');
+    document.getElementById('drive-label').textContent = 'Drive desconectado';
+    toast('Erro ao verificar Drive: ' + err.message, 'error');
+  }
 }
 
 // ═══════════════════════════════════════════════════
@@ -940,6 +963,7 @@ function iniciarApp() {
   renderObs();
   updateCalc();
   renderHistorico();
+  verificarScript();
 }
 </script>
 </body>

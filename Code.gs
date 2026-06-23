@@ -8,6 +8,16 @@ const CONFIG = {
   MESES: ["", "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"]
 };
 
+function createJsonResponse(payload) {
+  const output = ContentService.createTextOutput(JSON.stringify(payload)).setMimeType(ContentService.MimeType.JSON);
+  if (typeof output.setHeader === 'function') {
+    output.setHeader('Access-Control-Allow-Origin', '*');
+    output.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS');
+    output.setHeader('Access-Control-Allow-Headers', 'Content-Type');
+  }
+  return output;
+}
+
 function doPost(e) {
   try {
     const dados = JSON.parse(e.postData.contents);
@@ -20,13 +30,15 @@ function doPost(e) {
     } else {
       resultado = { erro: "Ação desconhecida" };
     }
-    return ContentService.createTextOutput(JSON.stringify(resultado)).setMimeType(ContentService.MimeType.JSON);
+    return createJsonResponse(resultado);
   } catch (err) {
-    return ContentService.createTextOutput(JSON.stringify({ erro: err.message })).setMimeType(ContentService.MimeType.JSON);
+    return createJsonResponse({ erro: err.message });
   }
 }
 
-function doGet(e) { return ContentService.createTextOutput(JSON.stringify({ status: "SADJ Ativo" })).setMimeType(ContentService.MimeType.JSON); }
+function doGet(e) {
+  return createJsonResponse({ status: "SADJ Ativo" });
+}
 
 function obterPastaMes(mes, ano) {
   const nomePasta = mes.toUpperCase() + "_" + String(ano).slice(-2);
