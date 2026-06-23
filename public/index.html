@@ -383,13 +383,13 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
         <div class="row col-2">
           <div>
             <label>URL do Apps Script (Web App)</label>
-            <input type="text" id="cfg-script-url" placeholder="https://script.google.com/macros/s/.../exec" oninput="salvarConfigLocal()">
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">Gerada ao publicar o Code.gs como Web App</div>
+            <input type="text" id="cfg-script-url" value="https://script.google.com/macros/s/AKfycbxElmtR5UwSO_aMRIH7bl5GA-gLbBEpicB1gWRhFLQ36n8NIT4JH8vmwqQUd_Rd8dK0/exec" readonly>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">URL embutida no código; não é necessário alterar.</div>
           </div>
           <div>
             <label>ID da pasta raiz no Drive</label>
-            <input type="text" id="cfg-pasta-id" placeholder="1ABC...xyz" oninput="salvarConfigLocal()">
-            <div style="font-size:11px;color:var(--muted);margin-top:3px">Copie da URL da pasta: /folders/<b>ID</b></div>
+            <input type="text" id="cfg-pasta-id" value="1AB0fgS-BI9Qdb6J0EN3TzjYGmTBhs7Ir" readonly>
+            <div style="font-size:11px;color:var(--muted);margin-top:3px">ID embutido no código; não é necessário alterar.</div>
           </div>
         </div>
         <div style="display:flex;gap:10px;margin-top:.5rem">
@@ -406,9 +406,9 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
         <div class="card-title">Guia de Configuração — Passo a Passo</div>
         <div style="font-size:13px;line-height:1.9;color:var(--text);display:flex;flex-direction:column;gap:.75rem">
           <div style="display:flex;gap:10px"><span class="step-badge">1</span><div>Acesse <a href="https://script.google.com" target="_blank" style="color:var(--navy);font-weight:600">script.google.com</a> → Novo projeto → cole o conteúdo do <code>Code.gs</code></div></div>
-          <div style="display:flex;gap:10px"><span class="step-badge">2</span><div>No <code>Code.gs</code>, substitua <code>COLE_O_ID_DA_PASTA_RAIZ_AQUI</code> pelo ID da sua pasta do Drive</div></div>
+          <div style="display:flex;gap:10px"><span class="step-badge">2</span><div>O URL do Apps Script e o ID da pasta raiz já estão embutidos no código.</div></div>
           <div style="display:flex;gap:10px"><span class="step-badge">3</span><div><b>Implantar → Nova implantação → App da Web</b> → Executar como: <em>Eu</em> · Acesso: <em>Qualquer pessoa</em> → Implantar → copie a URL</div></div>
-          <div style="display:flex;gap:10px"><span class="step-badge">4</span><div>Cole a URL e o ID da pasta nos campos acima → clique em <b>Salvar configurações no Drive</b></div></div>
+          <div style="display:flex;gap:10px"><span class="step-badge">4</span><div>Não é necessário colar a URL ou o ID manualmente.</div></div>
           <div style="display:flex;gap:10px"><span class="step-badge">5</span><div>✓ Pronto! Os PDFs serão salvos em <code>PASTA_RAIZ/BALANCETES_SISTEMA/</code> e os comprovantes em <code>PASTA_RAIZ/MES_ANO/COMPROVANTES/</code></div></div>
         </div>
       </div>
@@ -486,7 +486,10 @@ let despesas   = [emptyItem()];
 let receitas   = [emptyItem()];
 let observacoes = [{ texto: 'Valor a ser restituído à SADJ - R$ 0,00' }];
 let uploadingItem = null;
-let cfg = { scriptUrl: '', pastaId: '' };
+let cfg = {
+  scriptUrl: 'https://script.google.com/macros/s/AKfycbxElmtR5UwSO_aMRIH7bl5GA-gLbBEpicB1gWRhFLQ36n8NIT4JH8vmwqQUd_Rd8dK0/exec',
+  pastaId: '1AB0fgS-BI9Qdb6J0EN3TzjYGmTBhs7Ir'
+};
 
 function emptyItem() {
   return { data:'', valor:'', desc:'', comp:'', url:'' };
@@ -519,7 +522,13 @@ async function carregarConfig() {
   // 1. Carrega local primeiro (rápido)
   try {
     const s = localStorage.getItem('sadj_cfg');
-    if (s) cfg = { ...cfg, ...JSON.parse(s) };
+    if (s) {
+      const saved = JSON.parse(s);
+      cfg = {
+        scriptUrl: saved.scriptUrl && saved.scriptUrl.trim() ? saved.scriptUrl.trim() : cfg.scriptUrl,
+        pastaId:   saved.pastaId   && saved.pastaId.trim()   ? saved.pastaId.trim()   : cfg.pastaId
+      };
+    }
     if (cfg.scriptUrl) document.getElementById('cfg-script-url').value = cfg.scriptUrl;
     if (cfg.pastaId)   document.getElementById('cfg-pasta-id').value   = cfg.pastaId;
   } catch(e) {}

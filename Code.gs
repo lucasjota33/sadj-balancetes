@@ -3,7 +3,7 @@
 // ============================================================
 
 const CONFIG = {
-  PASTA_RAIZ_ID: "COLE_O_ID_DA_PASTA_SADJ_2026_AQUI",
+  PASTA_RAIZ_ID: "1AB0fgS-BI9Qdb6J0EN3TzjYGmTBhs7Ir",
   PLANILHA_ID: "1QDdrJv7vRWckLojm8v6UFX7ORFDIRjcrUffUvZevmoU", // Sua planilha oficial
   MESES: ["", "JANEIRO", "FEVEREIRO", "MARÇO", "ABRIL", "MAIO", "JUNHO", "JULHO", "AGOSTO", "SETEMBRO", "OUTUBRO", "NOVEMBRO", "DEZEMBRO"]
 };
