@@ -669,8 +669,9 @@ async function salvarBalancete() {
       pdfBase64
     });
     if (r.erro) throw new Error(r.erro);
+    const pdfUrl = r.urlPdf && typeof r.urlPdf === 'object' ? r.urlPdf.url : r.urlPdf;
     // Registra no histórico compartilhado
-    await salvarHistorico(d, r.urlPdf);
+    await salvarHistorico(d, pdfUrl);
     toast(`✓ Balancete ${d.mes}/${d.ano} salvo no Drive!`, 'success');
   } catch(e) {
     toast('Erro: ' + e.message, 'error');
@@ -684,11 +685,12 @@ async function salvarBalancete() {
 //  HISTÓRICO COMPARTILHADO VIA DRIVE
 // ═══════════════════════════════════════════════════
 async function salvarHistorico(dados, urlPdf) {
+  const pdfUrl = urlPdf && typeof urlPdf === 'object' ? (urlPdf.url || '') : (urlPdf || '');
   const entrada = {
     mes:dados.mes, ano:dados.ano,
     saldoFinal:dados.saldoFinal,
     ts:new Date().toISOString(),
-    urlPdf: urlPdf || '',
+    urlPdf: pdfUrl,
     usuario: usuarioAtual
   };
   // Local imediato
@@ -703,17 +705,20 @@ function renderHistorico() {
   const hist = JSON.parse(localStorage.getItem('sadj_hist')||'[]');
   const el = document.getElementById('historico-body');
   if (!hist.length) { el.innerHTML='<div style="color:var(--muted);padding:.5rem 0">Nenhum balancete salvo ainda.</div>'; return; }
-  el.innerHTML = hist.map(h=>`
-    <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)">
-      <div>
-        <div style="font-weight:600;font-size:14px">${h.mes} / ${h.ano}</div>
-        <div style="font-size:11px;color:var(--muted)">${new Date(h.ts).toLocaleString('pt-BR')} · por ${h.usuario||'—'}</div>
-      </div>
-      <div style="display:flex;align-items:center;gap:12px">
-        <div style="font-size:15px;font-weight:700;color:var(--navy)">${fmtBRL(h.saldoFinal)}</div>
-        ${h.urlPdf?`<a href="${h.urlPdf}" target="_blank" class="btn btn-outline" style="padding:5px 12px;font-size:12px">Ver PDF</a>`:''}
-      </div>
-    </div>`).join('');
+  el.innerHTML = hist.map(h=>{
+    const pdfUrl = h.urlPdf && typeof h.urlPdf === 'object' ? (h.urlPdf.url || '') : h.urlPdf;
+    return `
+      <div style="display:flex;align-items:center;justify-content:space-between;padding:.75rem 0;border-bottom:1px solid var(--border)">
+        <div>
+          <div style="font-weight:600;font-size:14px">${h.mes} / ${h.ano}</div>
+          <div style="font-size:11px;color:var(--muted)">${new Date(h.ts).toLocaleString('pt-BR')} · por ${h.usuario||'—'}</div>
+        </div>
+        <div style="display:flex;align-items:center;gap:12px">
+          <div style="font-size:15px;font-weight:700;color:var(--navy)">${fmtBRL(h.saldoFinal)}</div>
+          ${pdfUrl?`<a href="${pdfUrl}" target="_blank" class="btn btn-outline" style="padding:5px 12px;font-size:12px">Ver PDF</a>`:''}
+        </div>
+      </div>`;
+  }).join('');
 }
 
 function confirmarResetHistorico() {
