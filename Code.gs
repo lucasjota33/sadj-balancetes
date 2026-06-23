@@ -41,9 +41,8 @@ function obterSubpasta(pastaPai, nomeSubpasta) {
 }
 
 function uploadComprovante(dados) {
-  // Aceita pasta enviada pelo frontend OU a configurada no script
-  const pastaRaizId = (dados.pastaId && dados.pastaId.trim()) ? dados.pastaId.trim() : CONFIG.PASTA_RAIZ_ID;
-  const pastaRaiz = DriveApp.getFolderById(pastaRaizId);
+  // Use sempre a pasta raiz configurada no backend para evitar inconsistências
+  const pastaRaiz = DriveApp.getFolderById(CONFIG.PASTA_RAIZ_ID);
 
   // Nome do mês sem acento, ex: MARCO_26
   const mesNorm = dados.mes.toUpperCase()
@@ -83,13 +82,19 @@ function salvarBalancete(dados) {
   }
   
   aba.clearContents();
-  escreverBalancete(aba, dados);
+  escreverBalancete(aba, {
+    ...dados,
+    despesas: Array.isArray(dados.despesas) ? dados.despesas : [],
+    receitas: Array.isArray(dados.receitas) ? dados.receitas : []
+  });
   const urlPdf = salvarPdfNoDrive(dados);
   
   return { sucesso: true, urlPlanilha: planilha.getUrl(), urlPdf: urlPdf };
 }
 
 function escreverBalancete(aba, d) {
+  const despesas = Array.isArray(d.despesas) ? d.despesas : [];
+  const receitas = Array.isArray(d.receitas) ? d.receitas : [];
   aba.getRange("B2").setValue("Diretoria Financeira SADJ 2026 - PRESTAÇÃO DE CONTAS");
   aba.getRange("K5").setValue("SADJ " + d.mes + "/" + d.ano);
   aba.getRange("B5").setValue("SALDO INICIAL");
@@ -97,16 +102,18 @@ function escreverBalancete(aba, d) {
 
   // Lógica simplificada para inserção (pode ser refinada conforme o seu template exato)
   aba.getRange("B17").setValue("DESPESAS");
-  d.despesas.forEach((dep, i) => {
+  despesas.forEach((dep, i) => {
     const lin = 20 + i;
     aba.getRange("B" + lin).setValue(i + 1);
     aba.getRange("C" + lin).setValue(dep.data);
     aba.getRange("E" + lin).setValue(parseFloat(dep.valor || 0));
-    aba.getRange("G" + lin).setValue(dep.descricao);
-    if (dep.urlDrive) {
-      aba.getRange("M" + lin).setFormula('=HYPERLINK("' + dep.urlDrive + '","' + dep.comprovante + '")');
+    aba.getRange("G" + lin).setValue(dep.desc || dep.descricao || '');
+    const comprovante = dep.comp || dep.comprovante || '';
+    const urlDrive = dep.url || dep.urlDrive || '';
+    if (urlDrive) {
+      aba.getRange("M" + lin).setFormula('=HYPERLINK("' + urlDrive + '","' + comprovante + '")');
     } else {
-      aba.getRange("M" + lin).setValue(dep.comprovante);
+      aba.getRange("M" + lin).setValue(comprovante);
     }
   });
 

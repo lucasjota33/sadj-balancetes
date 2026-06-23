@@ -642,7 +642,7 @@ async function salvarBalancete() {
     const pdfBase64 = await gerarPdfBase64(d);
     const r = await chamarScript({
       acao: 'salvarBalancete',
-      mes: d.mes, ano: d.ano,
+      ...d,
       pdfBase64
     });
     if (r.erro) throw new Error(r.erro);
@@ -725,6 +725,10 @@ function gerarPDFDownload() {
 function buildPdf(d, doc) {
   const brl = v => parseFloat(v||0).toLocaleString('pt-BR',{style:'currency',currency:'BRL'});
   const fmtDate = s => { if(!s) return '-'; const[y,m,dd]=s.split('-'); return `${dd}/${m}/${y}`; };
+  const despesas = Array.isArray(d.despesas) ? d.despesas : [];
+  const receitas = Array.isArray(d.receitas) ? d.receitas : [];
+  const observacoes = Array.isArray(d.observacoes) ? d.observacoes : [];
+  const cias = Array.isArray(d.cias) ? d.cias : [];
   const navy=[26,58,107];
   const w=doc.internal.pageSize.width;
   const H=doc.internal.pageSize.height;
@@ -756,8 +760,8 @@ function buildPdf(d, doc) {
   doc.autoTable({
     startY:y,
     head:[['Unidade','Qtd Cadetes','Não Pagantes','Valor Tab.','Total Arrecadado']],
-    body:[...d.cias.map(c=>[c.nome,c.qtd,c.np,brl(d.mensalidadeTabelada),c.arr>0?brl(c.arr):'-']),
-      ['TOTAL',d.cias.reduce((s,c)=>s+c.qtd,0),'','',brl(d.totalMensalidades)]],
+    body:[...cias.map(c=>[c.nome,c.qtd,c.np,brl(d.mensalidadeTabelada),c.arr>0?brl(c.arr):'-']),
+      ['TOTAL',cias.reduce((s,c)=>s+c.qtd,0),'','',brl(d.totalMensalidades)]],
     headStyles:{fillColor:navy,fontSize:7,fontStyle:'bold'},bodyStyles:{fontSize:8},
     columnStyles:{0:{cellWidth:28},1:{halign:'center'},2:{halign:'center'},3:{halign:'right'},4:{halign:'right'}},
     margin:{left:10,right:10},
@@ -769,8 +773,8 @@ function buildPdf(d, doc) {
   function tabelaItens(titulo, itens, total) {
     doc.setFontSize(8); doc.setFont('helvetica','bold'); doc.setTextColor(...navy);
     doc.text(titulo,10,y); doc.setTextColor(0,0,0); y+=2;
-    const filtrados = itens.filter(i=>i.desc||i.valor);
-    const body = filtrados.map((it,i)=>[i+1,fmtDate(it.data),brl(it.valor),it.desc,it.url?it.comp:it.comp]);
+    const filtrados = Array.isArray(itens) ? itens.filter(i=>i && (i.desc||i.valor)) : [];
+    const body = filtrados.map((it,i)=>[i+1,fmtDate(it.data),brl(it && it.valor),it && it.desc, it && it.comp]);
     body.push(['','Total',brl(total),'','']);
     doc.autoTable({
       startY:y,
@@ -804,13 +808,13 @@ function buildPdf(d, doc) {
     y=doc.lastAutoTable.finalY+5;
   }
 
-  tabelaItens('DESPESAS', d.despesas, d.totalDespesas);
-  tabelaItens('RECEITAS', d.receitas, d.totalReceitas);
+  tabelaItens('DESPESAS', despesas, d.totalDespesas);
+  tabelaItens('RECEITAS', receitas, d.totalReceitas);
 
   // Observações
-  if(d.observacoes&&d.observacoes.length){
+  if(observacoes.length){
     doc.setFontSize(7.5); doc.setFont('helvetica','normal'); doc.setTextColor(60,60,60);
-    d.observacoes.forEach(ob=>{ doc.text(`${ob.marcador} ${ob.texto}`,10,y); y+=4; });
+    observacoes.forEach(ob=>{ doc.text(`${ob.marcador} ${ob.texto}`,10,y); y+=4; });
     y+=2;
   }
 
