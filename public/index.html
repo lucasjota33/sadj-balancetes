@@ -251,7 +251,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
             </select>
           </div>
           <div><label>Ano</label><input type="number" id="ano" value="2026" onchange="updateCalc()"></div>
-          <div><label>Saldo inicial (R$)</label><input type="number" id="saldo_inicial" step="0.01" value="64148.03" onchange="updateCalc()"></div>
+          <div><label>Saldo inicial (R$)</label><input type="number" id="saldo_inicial" step="0.01" value="0.00" onchange="updateCalc()"></div>
         </div>
         <div class="row col-3">
           <div><label>Mensalidade tabelada (R$)</label><input type="number" id="msg_valor" step="0.01" value="70.00" onchange="updateCalc()"></div>
@@ -271,7 +271,7 @@ input:focus,select:focus,textarea:focus{outline:none;border-color:var(--navy);bo
             <tr><td>1ª CIA</td><td><input type="number" id="cia1_qtd" value="40" onchange="updateCalc()"></td><td><input type="number" id="cia1_np" value="0" onchange="updateCalc()"></td><td><input type="number" id="cia1_arr" step="0.01" value="0" onchange="updateCalc()"></td></tr>
             <tr><td>2ª CIA</td><td><input type="number" id="cia2_qtd" value="49" onchange="updateCalc()"></td><td><input type="number" id="cia2_np" value="0" onchange="updateCalc()"></td><td><input type="number" id="cia2_arr" step="0.01" value="0" onchange="updateCalc()"></td></tr>
             <tr><td>3ª CIA</td><td><input type="number" id="cia3_qtd" value="40" onchange="updateCalc()"></td><td><input type="number" id="cia3_np" value="0" onchange="updateCalc()"></td><td><input type="number" id="cia3_arr" step="0.01" value="0" onchange="updateCalc()"></td></tr>
-            <tr><td>4ª CIA</td><td><input type="number" id="cia4_qtd" value="0" onchange="updateCalc()"></td><td><input type="number" id="cia4_np" value="0" onchange="updateCalc()"></td><td><input type="number" id="cia4_arr" step="0.01" value="0" onchange="updateCalc()"></td></tr>
+            <tr><td>4ª CIA</td><td><input type="number" id="cia4_qtd" value="53" onchange="updateCalc()"></td><td><input type="number" id="cia4_np" value="0" onchange="updateCalc()"></td><td><input type="number" id="cia4_arr" step="0.01" value="0" onchange="updateCalc()"></td></tr>
           </tbody>
         </table>
         <div class="cia-total">Total: <span id="total_qtd">129</span> cadetes &nbsp;|&nbsp; Arrecadado: <span id="total_arr" style="color:var(--green)">R$ 0,00</span></div>
@@ -435,7 +435,7 @@ function fazerLogout() {
 // ═══════════════════════════════════════════════════
 let despesas   = [emptyItem()];
 let receitas   = [emptyItem()];
-let observacoes = [{ texto: 'Valor a ser restituído à SADJ - R$ 0,00' }];
+let observacoes = [emptyItem()];
 let uploadingItem = null;
 const cfg = {
   scriptUrl: 'https://script.google.com/macros/s/AKfycbwk2jeszZG5f8h3ml_SToVMCHvXq-SAt8LTqoVYd7gaV9DAEmdbFyH8HC7IXuvnXY5d/exec',
